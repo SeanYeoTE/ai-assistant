@@ -34,6 +34,7 @@ interface HistoryStore {
 function useLocalStorage<T>(key: string, initial: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [val, setVal] = useState<T>(() => {
     try {
+      if (typeof window === "undefined") return initial;
       const s = localStorage.getItem(key);
       return s ? (JSON.parse(s) as T) : initial;
     } catch {
@@ -757,7 +758,12 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
   const [copied, setCopied] = useState<Record<string, boolean>>({});
   const [toastMsg, setToastMsg] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsMobile("ontouchstart" in window || window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   // ── Create-class step (step 1.5) — only shown when classes.length === 0 at parse time ──
   const [showCreateClass, setShowCreateClass] = useState(false);
@@ -867,7 +873,9 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
           2000
         );
       })
-      .catch(() => {});
+      .catch(() => {
+        showToast("Copy failed — please copy manually");
+      });
   };
 
   const copyAll = () => {
@@ -878,8 +886,10 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
       .join("\n\n---\n\n");
     navigator.clipboard
       .writeText(all)
-      .then(() => showToast(`✓ All ${students.length} messages copied!`))
-      .catch(() => {});
+      .then(() => showToast(`Copied all ${students.length} messages`))
+      .catch(() => {
+        showToast("Copy failed — please copy manually");
+      });
   };
 
   const reset = () => {
@@ -1091,7 +1101,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
           </div>
         )}
 
-        {/* Primary CTA: camera */}
+        {/* Primary CTA: camera — larger on mobile */}
         <button
           onClick={() => {
             if (fileRef.current) {
@@ -1100,7 +1110,12 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
               fileRef.current.click();
             }
           }}
-          style={{ ...pri, marginBottom: 10, fontSize: 16 }}
+          style={{
+            ...pri,
+            marginBottom: 10,
+            fontSize: isMobile ? 20 : 16,
+            padding: isMobile ? "18px 0" : undefined,
+          }}
         >
           📷 Take Photo
         </button>
@@ -1128,7 +1143,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
           onChange={(e) => void handleFile(e.target.files?.[0])}
         />
 
-        {/* Drop zone / preview */}
+        {/* Drop zone / preview — hidden on mobile (touch devices use camera/library buttons above) */}
         <div
           onDragOver={(e) => {
             e.preventDefault();
@@ -1143,7 +1158,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
             borderRadius: 16,
             background: dragging ? "#F0FFF4" : preview ? "#F6FBF8" : "#FAFFFE",
             minHeight: 140,
-            display: "flex",
+            display: isMobile && !preview ? "none" : "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
@@ -2529,8 +2544,7 @@ export default function App() {
   const [tab, setTab] = useState("upload");
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1800);
-    return () => clearTimeout(t);
+    setLoading(false);
   }, []);
 
   const titles: Record<string, string> = {

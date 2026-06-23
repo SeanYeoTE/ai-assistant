@@ -20,7 +20,7 @@ Used by the tester agent and manual QA before every commit. Each item must be PA
 |---|---|---|
 | 1 | Send valid `{ imageBase64, studentNames, className }` | Returns `{ students: ParsedStudent[] }` with HTTP 200 |
 | 2 | Send request with missing `imageBase64` | Returns `{ error: "..." }` with HTTP 400 |
-| 3 | Send request with empty `studentNames` array | Returns `{ error: "..." }` with HTTP 400 |
+| 3 | Send request with empty `studentNames` array | Returns `{ students: ParsedStudent[] }` with HTTP 200; Claude reads names from the image (first-upload flow) |
 | 4 | Anthropic API returns malformed JSON | Returns fallback: all students with `uncertain: true`, `homework: "NA"`, `sp: null`, `tx: null` |
 | 5 | `ANTHROPIC_API_KEY` not set | Returns HTTP 500 with error message, does not crash the server |
 
@@ -54,11 +54,28 @@ Used by the tester agent and manual QA before every commit. Each item must be PA
 
 ---
 
+## Smart class creation (first upload)
+
+| # | Test | Expected |
+|---|---|---|
+| 20a | No classes + upload image | Parse button is enabled |
+| 20b | Successful parse with no prior classes | "Create Class" step appears instead of Review (step 2) |
+| 20c | "Create Class" step — student names | Detected student names are pre-filled and editable |
+| 20d | "Create Class" step — remove a student | Student is removed from the list |
+| 20e | "Create Class" step — add a student | Student is added to the list |
+| 20f | "Create Class & Continue" with empty class name | Button is disabled |
+| 20g | "Create Class & Continue" with empty student list | Button is disabled |
+| 20h | Complete the "Create Class" step | New class is saved to `hws_classes` in localStorage |
+| 20i | After class creation | Teacher proceeds to Review (step 2) with the already-parsed data |
+| 20j | Normal flow (classes already exist) | Upload tab behaves as before; no "Create Class" step appears |
+
+---
+
 ## Upload & Generate flow (daily use path)
 
 | # | Test | Expected |
 |---|---|---|
-| 20 | Upload tab with no classes | Empty state message: "No classes set up yet — go to Settings → Classes" |
+| 20 | Upload tab with no classes | Hint shown: "No classes yet — upload your first sheet and we'll create one from it"; upload zone and parse button are accessible |
 | 21 | Class dropdown | Shows all classes from `hws_classes` |
 | 22 | "Take Photo" button (mobile) | Triggers file input with `capture="environment"` |
 | 23 | "Choose from Library" button | Triggers file input without `capture` attribute |

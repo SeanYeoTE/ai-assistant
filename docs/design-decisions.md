@@ -166,6 +166,22 @@ Teacher pastes into WhatsApp
 
 ---
 
+## Decision 8: Smart class creation from first upload
+
+**Decision:** When a teacher has no classes set up and uploads their first image, the app sends the image to `/api/parse` with `studentNames: []`, then instead of navigating to Review it presents an inline "Create Class" step with the names Claude detected from the image pre-filled as the student list.
+
+**Why:**
+- Eliminates the manual data-entry bootstrap problem. The teacher cannot use the core parse feature without a class, but creating a class requires knowing all the student names — a chicken-and-egg problem that causes drop-off.
+- Claude vision already reads the student names off the handwritten sheet, so those names are the natural starting point for the class's student list. No information is duplicated; the parse step bootstraps the class.
+- Consistent with the core design principle: get the teacher to their first generated message as fast as possible. The inline class creation step sits directly in the upload flow rather than routing the teacher away to Settings.
+
+**What we rejected:**
+- Keeping the blocking empty state (prompting the teacher to go to Settings → Classes first): Forces manual data entry before the teacher can try the product; high drop-off risk.
+- Pre-creating a placeholder class automatically: Creates empty or incorrect data in localStorage with no teacher input; subsequent parse calls would have no student list to ground against.
+- Requiring onboarding to be completed (with student names) before allowing upload: The onboarding skip option exists precisely to let the teacher enter the app without full setup; reversing that decision for the upload tab is inconsistent and causes drop-off.
+
+---
+
 ## LLM integration patterns
 
 ### System prompt design

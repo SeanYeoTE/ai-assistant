@@ -27,6 +27,7 @@ This document is the authoritative reference for what the app does, how it is st
 | Settings — Profile | Edit teacher name; hard reset (clears all localStorage and reloads) |
 | Bottom navigation | Fixed three-tab nav: Upload, History, Settings |
 | PWA install | `<meta>` tags and manifest enable "Add to Home Screen" on iOS and Android for app-like launch |
+| Smart class creation from upload | When no classes exist, first parse response pre-fills a class creation step with detected student names |
 
 ---
 
@@ -42,6 +43,17 @@ This document is the authoritative reference for what the app does, how it is st
 6. Step 2 (Students): for each class, teacher enters student names (or skips by leaving blank) → taps "Finish Setup".
 7. `handleOnboardDone(name, classes)` is called: sets `hws_teacher`, `hws_classes`, `hws_onboarded` in localStorage.
 8. Main app renders with Upload tab active.
+
+### First-time upload flow (no classes)
+
+1. Teacher skips onboarding or finishes onboarding with no students.
+2. Lands on Upload tab; sees hint: "No classes yet — upload your first sheet and we'll create one from it."
+3. Uploads image and taps "Read & Parse Notes".
+4. API call sends `studentNames: []`, `className: ""` — Claude reads names directly from the image.
+5. After parse: "Create Class" step appears with the detected student names pre-filled.
+6. Teacher enters a class name; verifies and edits the student list; can add or remove names.
+7. Taps "Create Class & Continue" (button is disabled if class name is empty or student list is empty).
+8. Class is saved to `localStorage` (`hws_classes`); teacher proceeds to Review (step 2) with the already-parsed data.
 
 ### Upload and generate flow (daily use)
 
@@ -184,6 +196,7 @@ All localStorage state is managed by the `useLocalStorage(key, initial)` hook de
 | `students` | `ParsedStudent[]` | AI-parsed (and teacher-edited) student array |
 | `copied` | `Record<string, boolean>` | Per-student copy button state (true for 2s after copy) |
 | `allCopied` | `boolean` | "Copy All" button state (true for 2.5s after copy) |
+| `pendingStudents` | `ParsedStudent[] \| null` | Stores parse results while the teacher is in the Create Class step (first-upload flow only); null in all other states |
 
 **StudentCard component**
 | State | Type | Controls |
@@ -219,6 +232,8 @@ All localStorage state is managed by the `useLocalStorage(key, initial)` hook de
   imageBase64: string;      // base64-encoded JPEG, no data URL prefix
   classId: string;          // ID of the class record from hws_classes
   studentNames: string[];   // ordered list of student names for prompt grounding
+                            // Pass [] for the first-upload flow (no classes yet);
+                            // Claude will read names directly from the image
 }
 ```
 
@@ -378,10 +393,7 @@ The textarea editor shows the raw template. The teacher has no way to verify the
 **6. History date filtering**
 The per-student history list grows indefinitely. Add filter chips: "This week / This month / All."
 
-**7. Empty state on Upload when no classes exist**
-If the teacher skips onboarding and lands on Upload with no classes, the class dropdown is empty. Add an empty state prompting the teacher to go to Settings → Classes.
-
-**8. Typography hierarchy**
+**7. Typography hierarchy**
 Text sizing is uniform (11–15px) across the Upload screen. Add a larger, bolder heading to anchor the teacher visually before they interact with the upload zone.
 
 ### Implementation gaps (not UX — engineering TODOs)

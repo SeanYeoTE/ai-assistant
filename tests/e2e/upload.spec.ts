@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import path from "path";
 
 async function setupWithClass(page: import("@playwright/test").Page) {
   await page.goto("/");

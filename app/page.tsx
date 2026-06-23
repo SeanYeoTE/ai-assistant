@@ -732,6 +732,7 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
 // ── Upload tab ───────────────────────────────────────────────────
 interface UploadTabProps {
   classes: ClassRecord[];
+  setClasses: React.Dispatch<React.SetStateAction<ClassRecord[]>>;
   messageTemplate: string;
   onSaveHistory: (
     classId: string,
@@ -739,7 +740,7 @@ interface UploadTabProps {
   ) => void;
 }
 
-function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) {
+function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: UploadTabProps) {
   const [step, setStep] = useState(1);
   const [selClass, setSelClass] = useState(classes[0]?.id || "");
   const [date, setDate] = useState(todayStr);
@@ -753,6 +754,11 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
   const [toastMsg, setToastMsg] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // ── Create-class step (step 1.5) — only shown when classes.length === 0 at parse time ──
+  const [showCreateClass, setShowCreateClass] = useState(false);
+  const [newClassName, setNewClassName] = useState("");
+  const [newStudentNames, setNewStudentNames] = useState<string[]>([]);
 
   const activeClass = classes.find((c) => c.id === selClass) || classes[0];
 
@@ -786,7 +792,11 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
   );
 
   const handleParse = async () => {
-    if (!imageData || !activeClass) return;
+    if (!imageData) return;
+    // When no classes exist, send with empty arrays so Claude reads names from the image
+    const noClasses = classes.length === 0;
+    const studentNames = noClasses ? [] : (activeClass?.students ?? []);
+    const className = noClasses ? "" : (activeClass?.name ?? "");
     setLoading(true);
     setParseError(null);
     try {
@@ -795,8 +805,8 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageBase64: imageData,
-          studentNames: activeClass.students,
-          className: activeClass.name,
+          studentNames,
+          className,
         }),
       });
       const data = (await res.json()) as
@@ -806,7 +816,14 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
         setParseError("error" in data ? data.error : "Server error");
       } else {
         setStudents(data.students);
-        setStep(2);
+        if (noClasses) {
+          // Step 1.5: show Create Class panel with detected names pre-filled
+          setNewClassName("");
+          setNewStudentNames(data.students.map((s) => s.name));
+          setShowCreateClass(true);
+        } else {
+          setStep(2);
+        }
       }
     } catch {
       setParseError("Network error — could not reach parse API.");
@@ -867,36 +884,139 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
     setImageData(null);
     setStudents([]);
     setParseError(null);
+    setShowCreateClass(false);
+    setNewClassName("");
+    setNewStudentNames([]);
   };
 
-  // Empty state: no classes configured
-  if (classes.length === 0) {
+  // ── Create Class panel (step 1.5) ─────────────────────────────────
+  const handleCreateClass = () => {
+    const trimmedName = newClassName.trim();
+    const cleanedStudents = newStudentNames.map((s) => s.trim()).filter(Boolean);
+    if (!trimmedName || cleanedStudents.length === 0) return;
+    const newId = Date.now() + "";
+    const newClass: ClassRecord = {
+      id: newId,
+      name: trimmedName,
+      students: cleanedStudents,
+    };
+    setClasses((prev) => [...prev, newClass]);
+    setSelClass(newId);
+    setShowCreateClass(false);
+    setStep(2);
+  };
+
+  const canCreateClass =
+    newClassName.trim().length > 0 && newStudentNames.some((s) => s.trim());
+
+  if (showCreateClass)
     return (
-      <div
-        style={{
-          textAlign: "center",
-          padding: "60px 20px",
-          color: "#95D5B2",
-        }}
-      >
-        <div style={{ fontSize: 44, marginBottom: 16 }}>📋</div>
-        <div
+      <div>
+        <Steps current={1} />
+        <div style={{ marginBottom: 20 }}>
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 800,
+              color: "#1B4332",
+              marginBottom: 4,
+              letterSpacing: "-0.3px",
+            }}
+          >
+            Create Your First Class
+          </div>
+          <div style={{ fontSize: 14, color: "#74C69D" }}>
+            We detected these students from your sheet. Edit names or add more
+            before creating the class.
+          </div>
+        </div>
+
+        <div style={{ ...card, marginBottom: 16 }}>
+          <label style={lbl}>Class name</label>
+          <input
+            value={newClassName}
+            onChange={(e) => setNewClassName(e.target.value)}
+            placeholder="e.g. P2 Kindness"
+            style={{ ...inp }}
+            autoFocus
+          />
+        </div>
+
+        <div style={{ ...card, marginBottom: 16 }}>
+          <label style={{ ...lbl, marginBottom: 10 }}>
+            Students detected ({newStudentNames.filter((s) => s.trim()).length})
+          </label>
+          {newStudentNames.map((name, i) => (
+            <div
+              key={i}
+              style={{ display: "flex", gap: 8, marginBottom: 8 }}
+            >
+              <input
+                value={name}
+                onChange={(e) => {
+                  const updated = [...newStudentNames];
+                  updated[i] = e.target.value;
+                  setNewStudentNames(updated);
+                }}
+                placeholder={`Student ${i + 1}`}
+                style={{ ...inp, flex: 1 }}
+              />
+              <button
+                onClick={() =>
+                  setNewStudentNames((prev) => prev.filter((_, idx) => idx !== i))
+                }
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#95D5B2",
+                  fontSize: 16,
+                  cursor: "pointer",
+                  padding: "0 4px",
+                  fontFamily: "inherit",
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={() => setNewStudentNames((prev) => [...prev, ""])}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#52B788",
+              fontWeight: 700,
+              fontSize: 13,
+              cursor: "pointer",
+              padding: "4px 0",
+              fontFamily: "inherit",
+            }}
+          >
+            + Add student
+          </button>
+        </div>
+
+        <button
+          onClick={handleCreateClass}
+          disabled={!canCreateClass}
           style={{
-            fontWeight: 700,
-            fontSize: 17,
-            color: "#2D6A4F",
+            ...pri,
+            opacity: canCreateClass ? 1 : 0.4,
+            cursor: canCreateClass ? "pointer" : "not-allowed",
             marginBottom: 10,
           }}
         >
-          No classes set up yet
-        </div>
-        <div style={{ fontSize: 14, color: "#74C69D", lineHeight: 1.6 }}>
-          Go to <strong>Settings → Classes</strong> to add your first class and
-          students before uploading a progress sheet.
-        </div>
+          Create Class &amp; Continue →
+        </button>
+        <button
+          onClick={() => setShowCreateClass(false)}
+          style={{ ...sec, width: "100%", textAlign: "center" }}
+        >
+          ← Back to Upload
+        </button>
+        <Toast message={toastMsg} visible={toastVisible} />
       </div>
     );
-  }
 
   if (step === 1)
     return (
@@ -918,22 +1038,37 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
             Take a photo or choose from your library
           </div>
         </div>
-        <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-          <div style={{ flex: 1 }}>
-            <label style={lbl}>Class</label>
-            <select
-              value={selClass}
-              onChange={(e) => setSelClass(e.target.value)}
-              style={{ ...inp }}
-            >
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+
+        {classes.length > 0 && (
+          <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+            <div style={{ flex: 1 }}>
+              <label style={lbl}>Class</label>
+              <select
+                value={selClass}
+                onChange={(e) => setSelClass(e.target.value)}
+                style={{ ...inp }}
+              >
+                {classes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={lbl}>Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                style={{ ...inp }}
+              />
+            </div>
           </div>
-          <div style={{ flex: 1 }}>
+        )}
+
+        {classes.length === 0 && (
+          <div style={{ marginBottom: 20 }}>
             <label style={lbl}>Date</label>
             <input
               type="date"
@@ -942,7 +1077,7 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
               style={{ ...inp }}
             />
           </div>
-        </div>
+        )}
 
         {/* Primary CTA: camera */}
         <button
@@ -1039,6 +1174,25 @@ function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) 
             </div>
           )}
         </div>
+
+        {/* No-classes hint */}
+        {classes.length === 0 && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "12px 16px",
+              marginBottom: 12,
+              background: "#F0FFF4",
+              borderRadius: 10,
+              border: "1.5px solid #D8F3DC",
+            }}
+          >
+            <div style={{ fontSize: 13, color: "#52B788", lineHeight: 1.6 }}>
+              No classes yet — upload your first sheet and we&apos;ll create one
+              from it.
+            </div>
+          </div>
+        )}
 
         {parseError && (
           <div
@@ -2439,6 +2593,7 @@ export default function App() {
         {tab === "upload" && (
           <UploadTab
             classes={classes}
+            setClasses={setClasses}
             messageTemplate={messageTemplate}
             onSaveHistory={saveHistory}
           />

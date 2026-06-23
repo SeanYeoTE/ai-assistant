@@ -11,14 +11,16 @@ interface ParsedStudent {
 }
 
 function buildSystemPrompt(studentNames: string[]): string {
-  const list = studentNames.map((n) => `- ${n}`).join("\n");
+  const hasKnownList = studentNames.length > 0;
+  const listSection = hasKnownList
+    ? `Known student list for verification:\n${studentNames.map((n) => `- ${n}`).join("\n")}`
+    : `No prior student list is available. Read all student names directly from the handwriting in the image.`;
   return `You are helping convert handwritten student progress notes into structured data.
 
-Known student list for verification:
-${list}
+${listSection}
 
 Rules:
-- Read the handwriting carefully and prioritize matching names from the known student list.
+- Read the handwriting carefully${hasKnownList ? " and prioritize matching names from the known student list" : " and extract every student name visible on the sheet"}.
 - Do NOT hallucinate names, scores, or comments.
 - If something is unclear, mark it as [unclear] instead of guessing.
 - Preserve scores, units, comments, and homework exactly as written.
@@ -39,7 +41,7 @@ Return an array of student objects:
   }
 ]
 
-Set "uncertain": true if you were unsure about any value, if any field contains [unclear], or if a name doesn't exactly match the known student list.`;
+Set "uncertain": true if you were unsure about any value, if any field contains [unclear]${hasKnownList ? ", or if a name doesn't exactly match the known student list" : ""}.`;
 }
 
 function detectMediaType(
@@ -68,7 +70,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  if (!imageBase64 || !Array.isArray(studentNames) || studentNames.length === 0) {
+  if (!imageBase64 || !Array.isArray(studentNames)) {
     return Response.json(
       { error: "Missing required fields: imageBase64, studentNames" },
       { status: 400 }

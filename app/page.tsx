@@ -758,12 +758,12 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
   const [copied, setCopied] = useState<Record<string, boolean>>({});
   const [toastMsg, setToastMsg] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile] = useState(() =>
+    typeof window !== "undefined"
+      ? "ontouchstart" in window || window.matchMedia("(pointer: coarse)").matches
+      : false
+  );
   const fileRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setIsMobile("ontouchstart" in window || window.matchMedia("(pointer: coarse)").matches);
-  }, []);
 
   // ── Create-class step (step 1.5) — only shown when classes.length === 0 at parse time ──
   const [showCreateClass, setShowCreateClass] = useState(false);
@@ -2526,7 +2526,7 @@ function Splash() {
 
 // ── Root ─────────────────────────────────────────────────────────
 export default function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
   const [onboarded, setOnboarded] = useLocalStorage("hws_onboarded", false);
   const [teacherName, setTeacherName] = useLocalStorage("hws_teacher", "");
   const [classes, setClasses] = useLocalStorage<ClassRecord[]>(
@@ -2543,9 +2543,6 @@ export default function App() {
   );
   const [tab, setTab] = useState("upload");
 
-  useEffect(() => {
-    setLoading(false);
-  }, []);
 
   const titles: Record<string, string> = {
     upload: "Upload & Generate",

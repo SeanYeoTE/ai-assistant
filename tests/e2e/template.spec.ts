@@ -45,5 +45,5 @@ test("Settings: Reset restores default template", async ({ page }) => {
   await page.getByRole("button", { name: "Settings" }).click();
   await page.getByText("Tap to edit").click();
   await page.getByRole("button", { name: "Reset" }).click();
-  await expect(page.getByRole("textbox")).toContainText("Homework Success HWS");
+  await expect(page.locator("pre").filter({ hasText: "Homework Success HWS" })).toBeVisible();
 });

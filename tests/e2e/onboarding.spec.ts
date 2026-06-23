@@ -25,7 +25,7 @@ test("onboarding: full flow with class and students", async ({ page }) => {
   await page.getByRole("button", { name: "Get Started" }).click();
 
   await page.getByPlaceholder(/Class 1 name/).fill("P2 Kindness");
-  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button", { name: "Next →" }).click();
 
   await page.getByPlaceholder("Student 1").fill("Oliver");
   await page.getByRole("button", { name: "Finish Setup" }).click();
@@ -40,5 +40,5 @@ test("onboarding: skip setup reaches app with empty state on upload", async ({
   await page.waitForSelector("text=Skip", { timeout: 4000 });
   await page.getByText(/Skip/).click();
 
-  await expect(page.getByText("No classes set up yet")).toBeVisible();
+  await expect(page.getByText(/No classes yet/)).toBeVisible();
 });

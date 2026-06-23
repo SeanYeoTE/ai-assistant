@@ -8,7 +8,7 @@ async function setupWithClass(page: import("@playwright/test").Page) {
   await page.getByPlaceholder("e.g. Teacher Yie Teng").fill("Teacher Test");
   await page.getByRole("button", { name: "Get Started" }).click();
   await page.getByPlaceholder(/Class 1 name/).fill("P2 Kindness");
-  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button", { name: "Next →" }).click();
   await page.getByPlaceholder("Student 1").fill("Oliver");
   await page.getByRole("button", { name: "Finish Setup" }).click();
   await page.waitForSelector("text=Upload & Generate");
@@ -60,5 +60,5 @@ test("empty state shown when no classes", async ({ page }) => {
   await page.reload();
   await page.waitForSelector("text=Skip", { timeout: 4000 });
   await page.getByText(/Skip/).click();
-  await expect(page.getByText("No classes set up yet")).toBeVisible();
+  await expect(page.getByText(/No classes yet/)).toBeVisible();
 });

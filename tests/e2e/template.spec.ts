@@ -19,9 +19,9 @@ test("Settings: template editor shows {{vars}} not rendered names", async ({
 }) => {
   await completeOnboarding(page);
   await page.getByRole("button", { name: "Settings" }).click();
-  await expect(page.getByText("{{studentName}}")).toBeVisible();
-  await expect(page.getByText("{{className}}")).toBeVisible();
-  await expect(page.getByText("{{sp}}")).toBeVisible();
+  await expect(page.getByText("{{studentName}}", { exact: true })).toBeVisible();
+  await expect(page.getByText("{{className}}", { exact: true })).toBeVisible();
+  await expect(page.getByText("{{sp}}", { exact: true })).toBeVisible();
 });
 
 test("Settings: edit and save custom template persists on reload", async ({
@@ -45,5 +45,5 @@ test("Settings: Reset restores default template", async ({ page }) => {
   await page.getByRole("button", { name: "Settings" }).click();
   await page.getByText("Tap to edit").click();
   await page.getByRole("button", { name: "Reset" }).click();
-  await expect(page.getByText("Homework Success HWS")).toBeVisible();
+  await expect(page.getByRole("textbox")).toContainText("Homework Success HWS");
 });

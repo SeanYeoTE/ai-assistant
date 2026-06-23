@@ -61,14 +61,13 @@ SP: {{sp}}
 TX: {{tx}}
 
 With Love & Light,
-{{teacherName}}`;
+Teacher Yie Teng`;
 
 function generateMessage(
   student: ParsedStudent,
   className: string,
   date: Date,
-  template: string,
-  teacherName: string
+  template: string
 ): string {
   const dateStr = date.toLocaleDateString("en-SG", {
     day: "numeric",
@@ -81,8 +80,7 @@ function generateMessage(
     .replace(/{{date}}/g, dateStr)
     .replace(/{{homework}}/g, student.homework || "NA")
     .replace(/{{sp}}/g, student.sp || "—")
-    .replace(/{{tx}}/g, student.tx || "—")
-    .replace(/{{teacherName}}/g, teacherName);
+    .replace(/{{tx}}/g, student.tx || "—");
 }
 
 function formatDate(d: Date | string): string {
@@ -735,14 +733,13 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
 interface UploadTabProps {
   classes: ClassRecord[];
   messageTemplate: string;
-  teacherName: string;
   onSaveHistory: (
     classId: string,
     entry: { date: string; students: ParsedStudent[] }
   ) => void;
 }
 
-function UploadTab({ classes, messageTemplate, teacherName, onSaveHistory }: UploadTabProps) {
+function UploadTab({ classes, messageTemplate, onSaveHistory }: UploadTabProps) {
   const [step, setStep] = useState(1);
   const [selClass, setSelClass] = useState(classes[0]?.id || "");
   const [date, setDate] = useState(todayStr);
@@ -839,7 +836,7 @@ function UploadTab({ classes, messageTemplate, teacherName, onSaveHistory }: Upl
   const copyOne = (s: ParsedStudent) => {
     navigator.clipboard
       .writeText(
-        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate, teacherName)
+        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate)
       )
       .then(() => {
         setCopied((p) => ({ ...p, [s.name]: true }));
@@ -855,7 +852,7 @@ function UploadTab({ classes, messageTemplate, teacherName, onSaveHistory }: Upl
   const copyAll = () => {
     const all = students
       .map((s) =>
-        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate, teacherName)
+        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate)
       )
       .join("\n\n---\n\n");
     navigator.clipboard
@@ -1230,7 +1227,7 @@ function UploadTab({ classes, messageTemplate, teacherName, onSaveHistory }: Upl
               wordBreak: "break-word",
             }}
           >
-            {generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate, teacherName)}
+            {generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate)}
           </pre>
         </div>
       ))}
@@ -1907,8 +1904,7 @@ function SettingsTab({
                     previewStudent,
                     previewClass,
                     previewDate,
-                    draft,
-                    teacherName
+                    draft
                   )}
                 </pre>
               </div>
@@ -2444,7 +2440,6 @@ export default function App() {
           <UploadTab
             classes={classes}
             messageTemplate={messageTemplate}
-            teacherName={teacherName}
             onSaveHistory={saveHistory}
           />
         )}

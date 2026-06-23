@@ -665,41 +665,13 @@ function StudentCard({ student, onChange, isDuplicate }: StudentCardProps) {
               color: statusColor,
               fontWeight: 500,
               marginTop: 2,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {statusText}
           </div>
-        </div>
-        {/* Inline SP/TX chips */}
-        <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-          {student.sp && (
-            <span
-              style={{
-                background: "#F0FFF4",
-                borderRadius: 6,
-                padding: "2px 8px",
-                fontSize: 11,
-                color: "#2D6A4F",
-                fontWeight: 600,
-              }}
-            >
-              SP: {student.sp}
-            </span>
-          )}
-          {student.tx && (
-            <span
-              style={{
-                background: "#F0FFF4",
-                borderRadius: 6,
-                padding: "2px 8px",
-                fontSize: 11,
-                color: "#2D6A4F",
-                fontWeight: 600,
-              }}
-            >
-              TX: {student.tx}
-            </span>
-          )}
         </div>
       </div>
       {/* Always-visible editable fields */}
@@ -1292,6 +1264,22 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
     return (
       <div>
         <Steps current={2} />
+        <div style={{ marginBottom: 16 }}>
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 800,
+              color: "#1B4332",
+              marginBottom: 4,
+              letterSpacing: "-0.3px",
+            }}
+          >
+            Review Entries
+          </div>
+          <div style={{ fontSize: 14, color: "#74C69D" }}>
+            Check and edit before sending
+          </div>
+        </div>
         <div
           style={{
             background: "#D8F3DC",

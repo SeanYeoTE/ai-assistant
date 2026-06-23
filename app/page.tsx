@@ -2061,7 +2061,7 @@ function SettingsTab({
                   border: "1.5px solid #52B788",
                   borderRadius: 12,
                   padding: "14px",
-                  fontSize: 13,
+                  fontSize: 16,
                   color: "#1B4332",
                   lineHeight: 1.8,
                   outline: "none",

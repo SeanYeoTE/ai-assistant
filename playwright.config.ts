@@ -16,16 +16,20 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    {
-      name: "mobile-safari",
-      use: { ...devices["iPhone 14"] },
-    },
+    // mobile-safari needs webkit — only include when not in CI (webkit not installed there)
+    ...(process.env.CI
+      ? []
+      : [
+          {
+            name: "mobile-safari",
+            use: { ...devices["iPhone 14"] },
+          },
+        ]),
   ],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: "npm run dev",
-        url: "http://localhost:3000",
-        reuseExistingServer: true,
-      },
+  webServer: {
+    command: "npm run dev",
+    url: "http://localhost:3000",
+    reuseExistingServer: !process.env.CI,
+    timeout: 60 * 1000,
+  },
 });

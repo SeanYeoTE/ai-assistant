@@ -899,7 +899,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
   const handleCreateClass = () => {
     const trimmedName = newClassName.trim();
     const cleanedStudents = newStudentNames.map((s) => s.trim()).filter(Boolean);
-    if (!trimmedName || cleanedStudents.length === 0) return;
+    if (!trimmedName) return;
     const newId = Date.now() + "";
     const newClass: ClassRecord = {
       id: newId,
@@ -908,12 +908,15 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
     };
     setClasses((prev) => [...prev, newClass]);
     setSelClass(newId);
-    setShowCreateClass(false);
-    setStep(2);
+    if (cleanedStudents.length === 0) {
+      reset();
+    } else {
+      setShowCreateClass(false);
+      setStep(2);
+    }
   };
 
-  const canCreateClass =
-    newClassName.trim().length > 0 && newStudentNames.some((s) => s.trim());
+  const canCreateClass = newClassName.trim().length > 0;
 
   if (showCreateClass)
     return (

@@ -125,7 +125,7 @@ const inp: React.CSSProperties = {
   border: "1.5px solid #D8F3DC",
   borderRadius: 10,
   padding: "10px 12px",
-  fontSize: 14,
+  fontSize: 16,
   color: "#1B4332",
   outline: "none",
   fontFamily: "inherit",
@@ -595,14 +595,25 @@ function Steps({ current }: { current: number }) {
 interface StudentCardProps {
   student: ParsedStudent;
   onChange: (updated: ParsedStudent) => void;
+  isDuplicate?: boolean;
 }
 
-function StudentCard({ student, onChange }: StudentCardProps) {
+function StudentCard({ student, onChange, isDuplicate }: StudentCardProps) {
+  const borderColor = isDuplicate ? "#E63946" : student.uncertain ? "#FFB703" : "#D8F3DC";
+  const avatarBg = isDuplicate ? "#FFE5E7" : student.uncertain ? "#FFF3CD" : "#D8F3DC";
+  const avatarColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#2D6A4F";
+  const statusColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#74C69D";
+  const statusText = isDuplicate
+    ? "⚠ Duplicate name"
+    : student.uncertain
+    ? "⚠ Check this entry"
+    : "✓ Parsed";
+
   return (
     <div
       style={{
         ...card,
-        border: `1.5px solid ${student.uncertain ? "#FFB703" : "#D8F3DC"}`,
+        border: `1.5px solid ${borderColor}`,
       }}
     >
       {/* Always-visible summary row */}
@@ -619,29 +630,44 @@ function StudentCard({ student, onChange }: StudentCardProps) {
             width: 34,
             height: 34,
             borderRadius: "50%",
-            background: student.uncertain ? "#FFF3CD" : "#D8F3DC",
+            background: avatarBg,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontWeight: 700,
-            color: student.uncertain ? "#B07D00" : "#2D6A4F",
+            color: avatarColor,
             flexShrink: 0,
           }}
         >
-          {student.name[0]}
+          {student.name[0]?.toUpperCase() || "?"}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, color: "#1B4332" }}>
-            {student.name}
-          </div>
+          <input
+            value={student.name}
+            onChange={(e) => onChange({ ...student, name: e.target.value })}
+            placeholder="Student name"
+            style={{
+              fontWeight: 700,
+              fontSize: 16,
+              color: "#1B4332",
+              border: "none",
+              borderBottom: "1.5px solid #D8F3DC",
+              padding: "2px 0",
+              width: "100%",
+              background: "transparent",
+              fontFamily: "inherit",
+              outline: "none",
+            }}
+          />
           <div
             style={{
               fontSize: 11,
-              color: student.uncertain ? "#B07D00" : "#74C69D",
+              color: statusColor,
               fontWeight: 500,
+              marginTop: 2,
             }}
           >
-            {student.uncertain ? "⚠ Check this entry" : "✓ Parsed"}
+            {statusText}
           </div>
         </div>
         {/* Inline SP/TX chips */}
@@ -1304,15 +1330,23 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
             {students.length} students
           </span>
         </div>
-        {students.map((s, i) => (
-          <StudentCard
-            key={s.name + i}
-            student={s}
-            onChange={(u) =>
-              setStudents((p) => p.map((x, xi) => (xi === i ? u : x)))
-            }
-          />
-        ))}
+        {(() => {
+          const nameCounts = students.reduce<Record<string, number>>((acc, s) => {
+            const key = s.name.trim().toLowerCase();
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+          }, {});
+          return students.map((s, i) => (
+            <StudentCard
+              key={s.name + i}
+              student={s}
+              isDuplicate={nameCounts[s.name.trim().toLowerCase()] > 1}
+              onChange={(u) =>
+                setStudents((p) => p.map((x, xi) => (xi === i ? u : x)))
+              }
+            />
+          ));
+        })()}
         <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
           <button onClick={() => setStep(1)} style={sec}>
             ← Back

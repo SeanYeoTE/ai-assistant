@@ -241,7 +241,7 @@ function Onboarding({ onDone }: OnboardingProps) {
 
   const canFinish =
     teacherName.trim() &&
-    classes.some((c) => c.name.trim() && c.students.some((s) => s.trim()));
+    classes.some((c) => c.name.trim());
 
   const finish = () => {
     const cleaned = classes
@@ -410,6 +410,12 @@ function Onboarding({ onDone }: OnboardingProps) {
                 Next →
               </button>
             </div>
+            <button
+              onClick={() => onDone(teacherName.trim(), [])}
+              style={{ background: "none", border: "none", color: "#95D5B2", fontSize: 13, cursor: "pointer", width: "100%", marginTop: 12, padding: "4px" }}
+            >
+              Skip — I&apos;ll set up classes later
+            </button>
           </div>
         )}
 
@@ -946,6 +952,11 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
           <label style={{ ...lbl, marginBottom: 10 }}>
             Students detected ({newStudentNames.filter((s) => s.trim()).length})
           </label>
+          {newStudentNames.length === 0 && (
+            <div style={{ fontSize: 12, color: "#B07D00", background: "#FFF3CD", borderRadius: 8, padding: "8px 12px", marginBottom: 10 }}>
+              No students could be read from this image. Add them manually below, or go back and try a clearer photo.
+            </div>
+          )}
           {newStudentNames.map((name, i) => (
             <div
               key={i}

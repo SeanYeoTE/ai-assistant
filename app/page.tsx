@@ -62,13 +62,14 @@ SP: {{sp}}
 TX: {{tx}}
 
 With Love & Light,
-Teacher Yie Teng`;
+{{teacherName}}`;
 
 function generateMessage(
   student: ParsedStudent,
   className: string,
   date: Date,
-  template: string
+  template: string,
+  teacherName: string = ""
 ): string {
   const dateStr = date.toLocaleDateString("en-SG", {
     day: "numeric",
@@ -81,7 +82,8 @@ function generateMessage(
     .replace(/{{date}}/g, dateStr)
     .replace(/{{homework}}/g, student.homework || "NA")
     .replace(/{{sp}}/g, student.sp || "—")
-    .replace(/{{tx}}/g, student.tx || "—");
+    .replace(/{{tx}}/g, student.tx || "—")
+    .replace(/{{teacherName}}/g, teacherName);
 }
 
 function formatDate(d: Date | string): string {
@@ -595,11 +597,13 @@ function Steps({ current }: { current: number }) {
 // ── Student card (review) ────────────────────────────────────────
 interface StudentCardProps {
   student: ParsedStudent;
+  original?: ParsedStudent;
   onChange: (updated: ParsedStudent) => void;
+  onRevert?: () => void;
   isDuplicate?: boolean;
 }
 
-function StudentCard({ student, onChange, isDuplicate }: StudentCardProps) {
+function StudentCard({ student, original, onChange, onRevert, isDuplicate }: StudentCardProps) {
   const borderColor = isDuplicate ? "#E63946" : student.uncertain ? "#FFB703" : "#D8F3DC";
   const avatarBg = isDuplicate ? "#FFE5E7" : student.uncertain ? "#FFF3CD" : "#D8F3DC";
   const avatarColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#2D6A4F";
@@ -674,6 +678,25 @@ function StudentCard({ student, onChange, isDuplicate }: StudentCardProps) {
             {statusText}
           </div>
         </div>
+        {onRevert && original && (
+          <button
+            onClick={onRevert}
+            title="Revert to parsed values"
+            style={{
+              background: "none",
+              border: "1px solid #95D5B2",
+              borderRadius: 8,
+              color: "#52B788",
+              fontSize: 11,
+              fontWeight: 700,
+              padding: "4px 10px",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            Revert
+          </button>
+        )}
       </div>
       {/* Always-visible editable fields */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -739,13 +762,14 @@ interface UploadTabProps {
   classes: ClassRecord[];
   setClasses: React.Dispatch<React.SetStateAction<ClassRecord[]>>;
   messageTemplate: string;
+  teacherName: string;
   onSaveHistory: (
     classId: string,
     entry: { date: string; students: ParsedStudent[] }
   ) => void;
 }
 
-function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: UploadTabProps) {
+function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHistory }: UploadTabProps) {
   const [step, setStep] = useState(1);
   const [selClass, setSelClass] = useState(classes[0]?.id || "");
   const [date, setDate] = useState(todayStr);
@@ -764,6 +788,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
       : false
   );
   const fileRef = useRef<HTMLInputElement>(null);
+  const [originalStudents, setOriginalStudents] = useState<ParsedStudent[]>([]);
 
   // ── Create-class step (step 1.5) — only shown when classes.length === 0 at parse time ──
   const [showCreateClass, setShowCreateClass] = useState(false);
@@ -803,9 +828,10 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
 
   const handleParse = async () => {
     if (!imageData) return;
-    // When no classes exist, send with empty arrays so Claude reads names from the image
+    // When no classes exist OR the active class has no students, let Claude read names from the image
     const noClasses = classes.length === 0;
-    const studentNames = noClasses ? [] : (activeClass?.students ?? []);
+    const emptyClass = !noClasses && (activeClass?.students.length ?? 0) === 0;
+    const studentNames = (noClasses || emptyClass) ? [] : (activeClass?.students ?? []);
     const className = noClasses ? "" : (activeClass?.name ?? "");
     setLoading(true);
     setParseError(null);
@@ -826,6 +852,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
         setParseError("error" in data ? data.error : "Server error");
       } else {
         setStudents(data.students);
+        setOriginalStudents(data.students);
         if (noClasses) {
           // Step 1.5: show Create Class panel with detected names pre-filled
           setNewClassName("");
@@ -863,7 +890,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
   const copyOne = (s: ParsedStudent) => {
     navigator.clipboard
       .writeText(
-        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate)
+        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate, teacherName)
       )
       .then(() => {
         setCopied((p) => ({ ...p, [s.name]: true }));
@@ -881,7 +908,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
   const copyAll = () => {
     const all = students
       .map((s) =>
-        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate)
+        generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate, teacherName)
       )
       .join("\n\n---\n\n");
     navigator.clipboard
@@ -1343,9 +1370,17 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
             <StudentCard
               key={s.name + i}
               student={s}
+              original={originalStudents[i]}
               isDuplicate={nameCounts[s.name.trim().toLowerCase()] > 1}
               onChange={(u) =>
                 setStudents((p) => p.map((x, xi) => (xi === i ? u : x)))
+              }
+              onRevert={() =>
+                setStudents((p) =>
+                  p.map((x, xi) =>
+                    xi === i ? { ...originalStudents[i] } : x
+                  )
+                )
               }
             />
           ));
@@ -1353,6 +1388,16 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
         <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
           <button onClick={() => setStep(1)} style={sec}>
             ← Back
+          </button>
+          <button
+            onClick={() => {
+              if (window.confirm("Re-parsing will replace your edits. Continue?")) {
+                void handleParse();
+              }
+            }}
+            style={sec}
+          >
+            Re-parse
           </button>
           <button onClick={saveAndSend} style={{ ...pri, flex: 1 }}>
             Generate {students.length} Messages →
@@ -1432,7 +1477,7 @@ function UploadTab({ classes, setClasses, messageTemplate, onSaveHistory }: Uplo
               wordBreak: "break-word",
             }}
           >
-            {generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate)}
+            {generateMessage(s, activeClass?.name || "", parsedDate, messageTemplate, teacherName)}
           </pre>
         </div>
       ))}
@@ -1778,6 +1823,8 @@ interface SettingsTabProps {
   setMessageTemplate: React.Dispatch<React.SetStateAction<string>>;
   teacherName: string;
   setTeacherName: React.Dispatch<React.SetStateAction<string>>;
+  history: HistoryStore;
+  setHistory: React.Dispatch<React.SetStateAction<HistoryStore>>;
 }
 
 function SettingsTab({
@@ -1787,12 +1834,60 @@ function SettingsTab({
   setMessageTemplate,
   teacherName,
   setTeacherName,
+  history,
+  setHistory,
 }: SettingsTabProps) {
   const [section, setSection] = useState("message");
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(messageTemplate);
   const [saved, setSaved] = useState(false);
   const [editingClass, setEditingClass] = useState<string | null>(null);
+  const importRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const payload = { classes, history, template: messageTemplate, teacherName };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `homework-success-${today}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string) as {
+          classes?: ClassRecord[];
+          history?: HistoryStore;
+          template?: string;
+          teacherName?: string;
+        };
+        const numClasses = data.classes?.length ?? 0;
+        const numHistory = Object.keys(data.history ?? {}).length;
+        if (
+          window.confirm(
+            `Import ${numClasses} class${numClasses !== 1 ? "es" : ""} and ${numHistory} history entr${numHistory !== 1 ? "ies" : "y"}? This will replace your current data.`
+          )
+        ) {
+          if (data.classes) setClasses(data.classes);
+          if (data.history) setHistory(data.history);
+          if (data.template) setMessageTemplate(data.template);
+          if (data.teacherName !== undefined) setTeacherName(data.teacherName);
+        }
+      } catch {
+        window.alert("Import failed — the file is not valid JSON. No data was changed.");
+      }
+      // Reset input so the same file can be re-imported
+      if (importRef.current) importRef.current.value = "";
+    };
+    reader.readAsText(file);
+  };
 
   const saveMsg = () => {
     setMessageTemplate(draft);
@@ -1975,6 +2070,17 @@ function SettingsTab({
                 >
                   {"{{tx}}"}
                 </code>
+                ,{" "}
+                <code
+                  style={{
+                    background: "#F0FFF4",
+                    padding: "1px 4px",
+                    borderRadius: 4,
+                    fontSize: 11,
+                  }}
+                >
+                  {"{{teacherName}}"}
+                </code>
               </div>
             </div>
           </div>
@@ -2109,7 +2215,8 @@ function SettingsTab({
                     previewStudent,
                     previewClass,
                     previewDate,
-                    draft
+                    draft,
+                    teacherName
                   )}
                 </pre>
               </div>
@@ -2292,6 +2399,40 @@ function SettingsTab({
             />
             <div style={{ fontSize: 12, color: "#95D5B2", marginTop: 6 }}>
               This appears in your message sign-off.
+            </div>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#74C69D",
+                marginBottom: 10,
+                letterSpacing: "0.5px",
+              }}
+            >
+              DATA BACKUP
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={handleExport} style={{ ...sec, flex: 1, textAlign: "center" }}>
+                Export Data
+              </button>
+              <button
+                onClick={() => importRef.current?.click()}
+                style={{ ...sec, flex: 1, textAlign: "center" }}
+              >
+                Import Data
+              </button>
+              <input
+                ref={importRef}
+                type="file"
+                accept="application/json,.json"
+                style={{ display: "none" }}
+                onChange={handleImport}
+              />
+            </div>
+            <div style={{ fontSize: 12, color: "#95D5B2", marginTop: 6 }}>
+              Export saves classes, history, template, and your name. Import replaces all data.
             </div>
           </div>
           <div
@@ -2642,6 +2783,7 @@ export default function App() {
             classes={classes}
             setClasses={setClasses}
             messageTemplate={messageTemplate}
+            teacherName={teacherName}
             onSaveHistory={saveHistory}
           />
         )}
@@ -2656,6 +2798,8 @@ export default function App() {
             setMessageTemplate={setMessageTemplate}
             teacherName={teacherName}
             setTeacherName={setTeacherName}
+            history={history}
+            setHistory={setHistory}
           />
         )}
       </div>

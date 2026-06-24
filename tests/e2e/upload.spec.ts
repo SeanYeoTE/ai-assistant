@@ -16,7 +16,7 @@ async function setupWithClass(page: import("@playwright/test").Page) {
 
 test("upload tab shows class selector and date", async ({ page }) => {
   await setupWithClass(page);
-  await expect(page.getByText("P2 Kindness")).toBeVisible();
+  await expect(page.locator("select")).toContainText("P2 Kindness");
   // Date input present
   await expect(page.locator('input[type="date"]')).toBeVisible();
 });

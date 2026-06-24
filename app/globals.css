@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #52B788 !important;
+  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.2) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}

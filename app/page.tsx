@@ -133,6 +133,7 @@ const inp: React.CSSProperties = {
   outline: "none",
   fontFamily: "inherit",
   background: "#fff",
+  transition: "border-color 0.15s ease, box-shadow 0.15s ease",
 };
 const pri: React.CSSProperties = {
   width: "100%",
@@ -1191,6 +1192,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             justifyContent: "center",
             transition: "all 0.2s",
             marginBottom: 16,
+            position: "relative",
           }}
         >
           {preview ? (
@@ -1225,6 +1227,48 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               <div style={{ fontSize: 13 }}>
                 Or drag and drop your image here
               </div>
+            </div>
+          )}
+          {loading && (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "rgba(45,106,79,0.15)",
+                borderRadius: 12,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+            >
+              <div
+                style={{
+                  width: 24,
+                  height: 24,
+                  border: "3px solid rgba(255,255,255,0.4)",
+                  borderTop: "3px solid #fff",
+                  borderRadius: "50%",
+                  animation: "spin 0.8s linear infinite",
+                }}
+              />
+              <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>
+                Reading handwriting…
+              </span>
+              {[0, 0.2, 0.4].map((delay, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: 80,
+                    height: 4,
+                    background: "rgba(255,255,255,0.7)",
+                    borderRadius: 2,
+                    animation: "pulse 1.2s ease-in-out infinite",
+                    animationDelay: `${delay}s`,
+                  }}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -2566,6 +2610,9 @@ function BottomNav({
               fontSize: 22,
               filter:
                 active === t.id ? "none" : "grayscale(1) opacity(0.5)",
+              transition: "filter 0.2s ease, transform 0.2s ease",
+              transform: active === t.id ? "scale(1.15)" : "scale(1)",
+              display: "inline-block",
             }}
           >
             {t.icon}
@@ -2576,20 +2623,22 @@ function BottomNav({
               fontWeight: 700,
               color: active === t.id ? "#2D6A4F" : "#95D5B2",
               letterSpacing: "0.3px",
+              transition: "color 0.2s ease",
             }}
           >
             {t.label}
           </span>
-          {active === t.id && (
-            <div
-              style={{
-                width: 20,
-                height: 3,
-                background: "#52B788",
-                borderRadius: 2,
-              }}
-            />
-          )}
+          <div
+            style={{
+              width: 20,
+              height: 3,
+              background: "#52B788",
+              borderRadius: 2,
+              opacity: active === t.id ? 1 : 0,
+              transform: active === t.id ? "scaleX(1)" : "scaleX(0)",
+              transition: "opacity 0.2s ease, transform 0.2s ease",
+            }}
+          />
         </button>
       ))}
     </div>

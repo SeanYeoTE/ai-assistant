@@ -25,7 +25,7 @@ test("onboarding: full flow with class and students", async ({ page }) => {
   await page.getByRole("button", { name: "Get Started" }).click();
 
   await page.getByPlaceholder(/Class 1 name/).fill("P2 Kindness");
-  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button").filter({ hasText: "Next" }).click();
 
   await page.getByPlaceholder("Student 1").fill("Oliver");
   await page.getByRole("button", { name: "Finish Setup" }).click();

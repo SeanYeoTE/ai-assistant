@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { Toast } from "../components/Toast";
+import { BottomNav } from "../components/BottomNav";
+import { StudentCard } from "../components/StudentCard";
+import type { ParsedStudent as ParsedStudentType } from "../components/StudentCard";
 
 // ── Types ────────────────────────────────────────────────────────
 interface ClassRecord {
@@ -9,13 +13,7 @@ interface ClassRecord {
   students: string[];
 }
 
-interface ParsedStudent {
-  name: string;
-  homework: string;
-  sp: string | null;
-  tx: string | null;
-  uncertain: boolean;
-}
+type ParsedStudent = ParsedStudentType;
 
 interface HistoryEntry {
   date: string;
@@ -595,168 +593,6 @@ function Steps({ current }: { current: number }) {
   );
 }
 
-// ── Student card (review) ────────────────────────────────────────
-interface StudentCardProps {
-  student: ParsedStudent;
-  original?: ParsedStudent;
-  onChange: (updated: ParsedStudent) => void;
-  onRevert?: () => void;
-  isDuplicate?: boolean;
-}
-
-function StudentCard({ student, original, onChange, onRevert, isDuplicate }: StudentCardProps) {
-  const borderColor = isDuplicate ? "#E63946" : student.uncertain ? "#FFB703" : "#D8F3DC";
-  const avatarBg = isDuplicate ? "#FFE5E7" : student.uncertain ? "#FFF3CD" : "#D8F3DC";
-  const avatarColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#2D6A4F";
-  const statusColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#74C69D";
-  const statusText = isDuplicate
-    ? "⚠ Duplicate name"
-    : student.uncertain
-    ? "⚠ Check this entry"
-    : "✓ Parsed";
-
-  return (
-    <div
-      style={{
-        ...card,
-        border: `1.5px solid ${borderColor}`,
-      }}
-    >
-      {/* Always-visible summary row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 12,
-        }}
-      >
-        <div
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: "50%",
-            background: avatarBg,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: 700,
-            color: avatarColor,
-            flexShrink: 0,
-          }}
-        >
-          {student.name[0]?.toUpperCase() || "?"}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <input
-            value={student.name}
-            onChange={(e) => onChange({ ...student, name: e.target.value })}
-            placeholder="Student name"
-            style={{
-              fontWeight: 700,
-              fontSize: 16,
-              color: "#1B4332",
-              border: "none",
-              borderBottom: "1.5px solid #D8F3DC",
-              padding: "2px 0",
-              width: "100%",
-              background: "transparent",
-              fontFamily: "inherit",
-              outline: "none",
-            }}
-          />
-          <div
-            style={{
-              fontSize: 11,
-              color: statusColor,
-              fontWeight: 500,
-              marginTop: 2,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {statusText}
-          </div>
-        </div>
-        {onRevert && original && (
-          <button
-            onClick={onRevert}
-            title="Revert to parsed values"
-            style={{
-              background: "none",
-              border: "1px solid #95D5B2",
-              borderRadius: 8,
-              color: "#52B788",
-              fontSize: 11,
-              fontWeight: 700,
-              padding: "4px 10px",
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
-          >
-            Revert
-          </button>
-        )}
-      </div>
-      {/* Always-visible editable fields */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <div>
-          <label style={{ ...lbl, marginBottom: 4 }}>Homework</label>
-          <input
-            value={student.homework || ""}
-            onChange={(e) => onChange({ ...student, homework: e.target.value })}
-            placeholder="NA"
-            style={{ ...inp }}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          {(["sp", "tx"] as const).map((f) => (
-            <div key={f} style={{ flex: 1 }}>
-              <label style={{ ...lbl, marginBottom: 4 }}>
-                {f.toUpperCase()}
-              </label>
-              <input
-                value={student[f] || ""}
-                onChange={(e) => onChange({ ...student, [f]: e.target.value })}
-                placeholder="—"
-                style={{ ...inp }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Toast notification ───────────────────────────────────────────
-function Toast({ message, visible }: { message: string; visible: boolean }) {
-  return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 80,
-        left: "50%",
-        transform: `translateX(-50%) translateY(${visible ? 0 : 20}px)`,
-        opacity: visible ? 1 : 0,
-        transition: "all 0.3s ease",
-        background: "#1B4332",
-        color: "#fff",
-        borderRadius: 12,
-        padding: "12px 22px",
-        fontSize: 14,
-        fontWeight: 700,
-        zIndex: 200,
-        pointerEvents: "none",
-        whiteSpace: "nowrap",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
-      }}
-    >
-      {message}
-    </div>
-  );
-}
 
 // ── Upload tab ───────────────────────────────────────────────────
 interface UploadTabProps {
@@ -2562,88 +2398,6 @@ function AddStudentInline({ onAdd }: { onAdd: (name: string) => void }) {
   );
 }
 
-// ── Bottom Nav ───────────────────────────────────────────────────
-function BottomNav({
-  active,
-  onChange,
-}: {
-  active: string;
-  onChange: (tab: string) => void;
-}) {
-  const tabs = [
-    { id: "upload", label: "Upload", icon: "📤" },
-    { id: "history", label: "History", icon: "📋" },
-    { id: "settings", label: "Settings", icon: "⚙️" },
-  ];
-  return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: "#fff",
-        borderTop: "1.5px solid #D8F3DC",
-        display: "flex",
-        zIndex: 100,
-        paddingBottom: "env(safe-area-inset-bottom,8px)",
-      }}
-    >
-      {tabs.map((t) => (
-        <button
-          key={t.id}
-          onClick={() => onChange(t.id)}
-          style={{
-            flex: 1,
-            padding: "10px 0 6px",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 3,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 22,
-              filter:
-                active === t.id ? "none" : "grayscale(1) opacity(0.5)",
-              transition: "filter 0.2s ease, transform 0.2s ease",
-              transform: active === t.id ? "scale(1.15)" : "scale(1)",
-              display: "inline-block",
-            }}
-          >
-            {t.icon}
-          </span>
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: active === t.id ? "#2D6A4F" : "#95D5B2",
-              letterSpacing: "0.3px",
-              transition: "color 0.2s ease",
-            }}
-          >
-            {t.label}
-          </span>
-          <div
-            style={{
-              width: 20,
-              height: 3,
-              background: "#52B788",
-              borderRadius: 2,
-              opacity: active === t.id ? 1 : 0,
-              transform: active === t.id ? "scaleX(1)" : "scaleX(0)",
-              transition: "opacity 0.2s ease, transform 0.2s ease",
-            }}
-          />
-        </button>
-      ))}
-    </div>
-  );
-}
 
 // ── Splash screen ────────────────────────────────────────────────
 function Splash() {

@@ -685,7 +685,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
     []
   );
 
-  const handleParse = async () => {
+  const handleParse = async (isReparse = false) => {
     if (!imageData) return;
     // When no classes exist OR the active class has no students, let Claude read names from the image
     const noClasses = classes.length === 0;
@@ -717,9 +717,10 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
           setNewClassName("");
           setNewStudentNames(data.students.map((s) => s.name));
           setShowCreateClass(true);
-        } else {
+        } else if (!isReparse) {
           setStep(2);
         }
+        // isReparse: stay on current step — user is already reviewing or navigated away intentionally
       }
     } catch {
       setParseError("Network error — could not reach parse API.");
@@ -802,12 +803,8 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
     };
     setClasses((prev) => [...prev, newClass]);
     setSelClass(newId);
-    if (cleanedStudents.length === 0) {
-      reset();
-    } else {
-      setShowCreateClass(false);
-      setStep(2);
-    }
+    setShowCreateClass(false);
+    setStep(2);
   };
 
   const canCreateClass = newClassName.trim().length > 0;
@@ -1292,14 +1289,15 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             <ArrowLeft size={16} /> Back
           </button>
           <button
+            disabled={loading}
             onClick={() => {
-              if (window.confirm("Re-parsing will replace your edits. Continue?")) {
-                void handleParse();
+              if (!loading && window.confirm("Re-parsing will replace your edits. Continue?")) {
+                void handleParse(true);
               }
             }}
-            style={sec}
+            style={{ ...sec, opacity: loading ? 0.5 : 1 }}
           >
-            Re-parse
+            {loading ? "Re-parsing…" : "Re-parse"}
           </button>
           <button onClick={saveAndSend} style={{ ...pri, flex: 1 }}>
             Generate {students.length} Messages <ArrowRight size={16} />

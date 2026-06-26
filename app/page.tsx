@@ -157,6 +157,10 @@ const pri: React.CSSProperties = {
   fontSize: 15,
   fontWeight: 700,
   cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
 };
 const sec: React.CSSProperties = {
   padding: "12px 18px",
@@ -168,6 +172,10 @@ const sec: React.CSSProperties = {
   fontWeight: 600,
   cursor: "pointer",
   fontFamily: "inherit",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
 };
 const card: React.CSSProperties = {
   background: "#fff",

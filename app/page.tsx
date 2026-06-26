@@ -1,6 +1,20 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  AlertTriangle,
+  X,
+  Plus,
+  Camera,
+  ImageIcon,
+  Copy,
+  Pencil,
+  RotateCcw,
+  Save,
+} from "lucide-react";
 import { Toast } from "../components/Toast";
 import { BottomNav } from "../components/BottomNav";
 import { StudentCard } from "../components/StudentCard";
@@ -332,7 +346,7 @@ function Onboarding({ onDone }: OnboardingProps) {
               disabled={!teacherName.trim()}
               style={{ ...pri, opacity: teacherName.trim() ? 1 : 0.4 }}
             >
-              Get Started →
+              Get Started <ArrowRight size={16} />
             </button>
             <button
               onClick={() => onDone("Teacher", [])}
@@ -384,7 +398,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                         padding: "0 4px",
                       }}
                     >
-                      ✕
+                      <X size={16} />
                     </button>
                   )}
                 </div>
@@ -394,11 +408,11 @@ function Onboarding({ onDone }: OnboardingProps) {
               onClick={addClass}
               style={{ ...sec, width: "100%", textAlign: "center", marginBottom: 20 }}
             >
-              + Add another class
+              <Plus size={16} /> Add another class
             </button>
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => setStep(0)} style={{ ...sec }}>
-                ← Back
+                <ArrowLeft size={16} /> Back
               </button>
               <button
                 onClick={() => setStep(2)}
@@ -409,7 +423,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                   opacity: classes.some((c) => c.name.trim()) ? 1 : 0.4,
                 }}
               >
-                Next →
+                Next <ArrowRight size={16} />
               </button>
             </div>
             <button
@@ -480,7 +494,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                             cursor: "pointer",
                           }}
                         >
-                          ✕
+                          <X size={16} />
                         </button>
                       )}
                     </div>
@@ -497,20 +511,20 @@ function Onboarding({ onDone }: OnboardingProps) {
                       padding: "4px 0",
                     }}
                   >
-                    + Add student
+                    <Plus size={16} /> Add student
                   </button>
                 </div>
               ))}
             <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
               <button onClick={() => setStep(1)} style={sec}>
-                ← Back
+                <ArrowLeft size={16} /> Back
               </button>
               <button
                 onClick={finish}
                 disabled={!canFinish}
                 style={{ ...pri, flex: 1, opacity: canFinish ? 1 : 0.4 }}
               >
-                Finish Setup →
+                Finish Setup <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -561,7 +575,7 @@ function Steps({ current }: { current: number }) {
                   transition: "all 0.3s",
                 }}
               >
-                {done ? "✓" : idx}
+                {done ? <Check size={16} /> : idx}
               </div>
               <span
                 style={{
@@ -861,7 +875,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
                   fontFamily: "inherit",
                 }}
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
           ))}
@@ -878,7 +892,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               fontFamily: "inherit",
             }}
           >
-            + Add student
+            <Plus size={16} /> Add student
           </button>
         </div>
 
@@ -892,13 +906,13 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             marginBottom: 10,
           }}
         >
-          Create Class &amp; Continue →
+          Create Class &amp; Continue <ArrowRight size={16} />
         </button>
         <button
           onClick={() => setShowCreateClass(false)}
           style={{ ...sec, width: "100%", textAlign: "center" }}
         >
-          ← Back to Upload
+          <ArrowLeft size={16} /> Back to Upload
         </button>
         <Toast message={toastMsg} visible={toastVisible} />
       </div>
@@ -981,7 +995,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             padding: isMobile ? "18px 0" : undefined,
           }}
         >
-          📷 Take Photo
+          <Camera size={20} /> Take Photo
         </button>
 
         {/* Secondary CTA: library */}
@@ -1052,14 +1066,14 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
                   fontWeight: 600,
                 }}
               >
-                ✓ Image loaded
+                <Check size={16} /> Image loaded
               </span>
             </>
           ) : (
             <div
               style={{ padding: 20, textAlign: "center", color: "#95D5B2" }}
             >
-              <div style={{ fontSize: 28, marginBottom: 6 }}>📄</div>
+              <div style={{ fontSize: 28, marginBottom: 6 }}><ImageIcon size={20} /></div>
               <div style={{ fontSize: 13 }}>
                 Or drag and drop your image here
               </div>
@@ -1139,7 +1153,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               marginBottom: 12,
             }}
           >
-            ⚠ {parseError}
+            <AlertTriangle size={16} /> {parseError}
           </div>
         )}
 
@@ -1175,7 +1189,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               Reading handwriting…
             </span>
           ) : (
-            "Read & Parse Notes →"
+            <>Read &amp; Parse Notes <ArrowRight size={16} /></>
           )}
         </button>
         <Toast message={toastMsg} visible={toastVisible} />
@@ -1212,7 +1226,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             gap: 10,
           }}
         >
-          <span style={{ fontSize: 18 }}>🤖</span>
+          <span style={{ fontSize: 18, display: "flex", alignItems: "center" }}><ImageIcon size={20} /></span>
           <div>
             <div style={{ fontWeight: 700, color: "#2D6A4F", fontSize: 14 }}>
               AI has pre-filled these from your photo
@@ -1267,7 +1281,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
         })()}
         <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
           <button onClick={() => setStep(1)} style={sec}>
-            ← Back
+            <ArrowLeft size={16} /> Back
           </button>
           <button
             onClick={() => {
@@ -1280,7 +1294,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             Re-parse
           </button>
           <button onClick={saveAndSend} style={{ ...pri, flex: 1 }}>
-            Generate {students.length} Messages →
+            Generate {students.length} Messages <ArrowRight size={16} />
           </button>
         </div>
         <Toast message={toastMsg} visible={toastVisible} />
@@ -1300,7 +1314,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
           gap: 10,
         }}
       >
-        <span style={{ fontSize: 18 }}>✅</span>
+        <span style={{ fontSize: 18, display: "flex", alignItems: "center" }}><Check size={18} /></span>
         <div>
           <div style={{ fontWeight: 700, color: "#2D6A4F", fontSize: 14 }}>
             {students.length} parent messages ready
@@ -1343,7 +1357,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
                 transition: "all 0.2s",
               }}
             >
-              {copied[s.name] ? "✓ Copied" : "Copy"}
+              {copied[s.name] ? <><Check size={16} /> Copied</> : <><Copy size={16} /> Copy</>}
             </button>
           </div>
           <pre
@@ -1362,7 +1376,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
         </div>
       ))}
       <button onClick={reset} style={{ ...sec, marginTop: 4 }}>
-        ← New Upload
+        <ArrowLeft size={16} /> New Upload
       </button>
       <Toast message={toastMsg} visible={toastVisible} />
     </div>
@@ -1403,7 +1417,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
             gap: 6,
           }}
         >
-          ← {activeClass?.name}
+          <ArrowLeft size={16} /> {activeClass?.name}
         </button>
         <div
           style={{
@@ -1869,7 +1883,7 @@ function SettingsTab({
               gap: 10,
             }}
           >
-            <span style={{ fontSize: 18 }}>✏️</span>
+            <span style={{ fontSize: 18, display: "flex", alignItems: "center" }}><Pencil size={18} /></span>
             <div>
               <div
                 style={{ fontWeight: 700, color: "#2D6A4F", fontSize: 14 }}
@@ -2023,7 +2037,7 @@ function SettingsTab({
                     marginTop: 14,
                   }}
                 >
-                  ✓ Saved!
+                  <Check size={16} /> Saved!
                 </div>
               )}
             </>
@@ -2105,13 +2119,13 @@ function SettingsTab({
                   onClick={() => setDraft(DEFAULT_TEMPLATE)}
                   style={{ ...sec, flex: 1, textAlign: "center" }}
                 >
-                  Reset
+                  <RotateCcw size={16} /> Reset
                 </button>
                 <button onClick={() => setEditing(false)} style={{ ...sec }}>
                   Cancel
                 </button>
                 <button onClick={saveMsg} style={{ ...pri, flex: 1 }}>
-                  Save
+                  <Save size={16} /> Save
                 </button>
               </div>
             </>
@@ -2231,7 +2245,7 @@ function SettingsTab({
                             padding: "4px",
                           }}
                         >
-                          ✕
+                          <X size={16} />
                         </button>
                       </div>
                     ))}
@@ -2262,7 +2276,7 @@ function SettingsTab({
             onClick={addClass}
             style={{ ...sec, width: "100%", textAlign: "center" }}
           >
-            + Add Class
+            <Plus size={16} /> Add Class
           </button>
         </div>
       )}
@@ -2326,7 +2340,7 @@ function SettingsTab({
                 marginBottom: 4,
               }}
             >
-              ⚠ Reset everything
+              <AlertTriangle size={16} /> Reset everything
             </div>
             <div style={{ fontSize: 12, color: "#B07D00", marginBottom: 12 }}>
               This will clear all history, classes, and settings.

@@ -22,7 +22,7 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
         left: 0,
         right: 0,
         background: "#fff",
-        borderTop: "1.5px solid #D8F3DC",
+        borderTop: "1px solid #E7E5E0",
         display: "flex",
         zIndex: 100,
         paddingBottom: "env(safe-area-inset-bottom,8px)",
@@ -46,11 +46,11 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
         >
           <span
             style={{
-              color: active === t.id ? "#2D6A4F" : "#95D5B2",
+              color: active === t.id ? "#5C8C76" : "#A8A29E",
               display: "flex",
               alignItems: "center",
               transition: "color 0.2s ease, transform 0.2s ease",
-              transform: active === t.id ? "scale(1.15)" : "scale(1)",
+              transform: active === t.id ? "scale(1.1)" : "scale(1)",
             }}
           >
             {t.icon}
@@ -58,8 +58,8 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
           <span
             style={{
               fontSize: 10,
-              fontWeight: 700,
-              color: active === t.id ? "#2D6A4F" : "#95D5B2",
+              fontWeight: active === t.id ? 600 : 400,
+              color: active === t.id ? "#5C8C76" : "#A8A29E",
               letterSpacing: "0.3px",
               transition: "color 0.2s ease",
             }}
@@ -69,9 +69,9 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
           <div
             style={{
               width: 20,
-              height: 3,
-              background: "#52B788",
-              borderRadius: 2,
+              height: 2,
+              background: "#5C8C76",
+              borderRadius: 1,
               opacity: active === t.id ? 1 : 0,
               transform: active === t.id ? "scaleX(1)" : "scaleX(0)",
               transition: "opacity 0.2s ease, transform 0.2s ease",

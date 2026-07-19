@@ -22,20 +22,20 @@ interface StudentCardProps {
 const lbl: React.CSSProperties = {
   display: "block",
   fontSize: 11,
-  fontWeight: 700,
-  color: "#52B788",
+  fontWeight: 600,
+  color: "#78716C",
   textTransform: "uppercase",
-  letterSpacing: "0.5px",
+  letterSpacing: "0.05em",
   marginBottom: 4,
 };
 
 const inp: React.CSSProperties = {
   width: "100%",
-  border: "1.5px solid #D8F3DC",
-  borderRadius: 10,
-  padding: "10px 12px",
-  fontSize: 16,
-  color: "#1B4332",
+  border: "1px solid #E7E5E0",
+  borderRadius: 6,
+  padding: "8px 10px",
+  fontSize: 14,
+  color: "#1C1917",
   outline: "none",
   fontFamily: "inherit",
   background: "#fff",
@@ -43,26 +43,25 @@ const inp: React.CSSProperties = {
 
 const card: React.CSSProperties = {
   background: "#fff",
-  borderRadius: 14,
-  border: "1.5px solid #D8F3DC",
+  borderRadius: 10,
+  border: "1px solid #E7E5E0",
   padding: "14px 16px",
   marginBottom: 10,
 };
 
 export function StudentCard({ student, original, onChange, onRevert, isDuplicate }: StudentCardProps) {
   const [localName, setLocalName] = useState(student.name);
-  const displayName = localName;
 
-  const borderColor = isDuplicate ? "#E63946" : student.uncertain ? "#FFB703" : "#D8F3DC";
-  const avatarBg = isDuplicate ? "#FFE5E7" : student.uncertain ? "#FFF3CD" : "#D8F3DC";
-  const avatarColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#2D6A4F";
-  const statusColor = isDuplicate ? "#C1121F" : student.uncertain ? "#B07D00" : "#74C69D";
+  const borderColor = isDuplicate ? "#DC2626" : student.uncertain ? "#B45309" : "#E7E5E0";
+  const avatarBg = isDuplicate ? "#FEE2E2" : student.uncertain ? "#FEF3C7" : "#F5F5F4";
+  const avatarColor = isDuplicate ? "#DC2626" : student.uncertain ? "#B45309" : "#5C8C76";
+  const statusColor = isDuplicate ? "#DC2626" : student.uncertain ? "#B45309" : "#A8A29E";
   const statusIcon = isDuplicate ? (
-    <AlertTriangle size={16} />
+    <AlertTriangle size={13} />
   ) : student.uncertain ? (
-    <AlertTriangle size={16} />
+    <AlertTriangle size={13} />
   ) : (
-    <Check size={16} />
+    <Check size={13} />
   );
   const statusText = isDuplicate
     ? "Duplicate name"
@@ -74,7 +73,7 @@ export function StudentCard({ student, original, onChange, onRevert, isDuplicate
     <div
       style={{
         ...card,
-        border: `1.5px solid ${borderColor}`,
+        border: `1px solid ${borderColor}`,
       }}
     >
       {/* Always-visible summary row */}
@@ -88,14 +87,15 @@ export function StudentCard({ student, original, onChange, onRevert, isDuplicate
       >
         <div
           style={{
-            width: 34,
-            height: 34,
+            width: 32,
+            height: 32,
             borderRadius: "50%",
             background: avatarBg,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontWeight: 700,
+            fontWeight: 600,
+            fontSize: 13,
             color: avatarColor,
             flexShrink: 0,
           }}
@@ -104,7 +104,7 @@ export function StudentCard({ student, original, onChange, onRevert, isDuplicate
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <input
-            value={displayName}
+            value={localName}
             onChange={(e) => setLocalName(e.target.value)}
             onBlur={() => {
               if (localName !== student.name) {
@@ -113,11 +113,11 @@ export function StudentCard({ student, original, onChange, onRevert, isDuplicate
             }}
             placeholder="Student name"
             style={{
-              fontWeight: 700,
-              fontSize: 16,
-              color: "#1B4332",
+              fontWeight: 600,
+              fontSize: 15,
+              color: "#1C1917",
               border: "none",
-              borderBottom: "1.5px solid #D8F3DC",
+              borderBottom: "1px solid #E7E5E0",
               padding: "2px 0",
               width: "100%",
               background: "transparent",
@@ -130,13 +130,10 @@ export function StudentCard({ student, original, onChange, onRevert, isDuplicate
               fontSize: 11,
               color: statusColor,
               fontWeight: 500,
-              marginTop: 2,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              marginTop: 3,
               display: "flex",
               alignItems: "center",
-              gap: 4,
+              gap: 3,
             }}
           >
             {statusIcon}
@@ -149,11 +146,11 @@ export function StudentCard({ student, original, onChange, onRevert, isDuplicate
             title="Revert to parsed values"
             style={{
               background: "none",
-              border: "1px solid #95D5B2",
-              borderRadius: 8,
-              color: "#52B788",
+              border: "1px solid #E7E5E0",
+              borderRadius: 6,
+              color: "#78716C",
               fontSize: 11,
-              fontWeight: 700,
+              fontWeight: 500,
               padding: "4px 10px",
               cursor: "pointer",
               flexShrink: 0,

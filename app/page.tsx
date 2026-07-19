@@ -129,19 +129,19 @@ const DEFAULT_CLASSES: ClassRecord[] = [
 const lbl: React.CSSProperties = {
   display: "block",
   fontSize: 11,
-  fontWeight: 700,
-  color: "#52B788",
+  fontWeight: 600,
+  color: "#78716C",
   textTransform: "uppercase",
-  letterSpacing: "0.5px",
+  letterSpacing: "0.05em",
   marginBottom: 6,
 };
 const inp: React.CSSProperties = {
   width: "100%",
-  border: "1.5px solid #D8F3DC",
-  borderRadius: 10,
+  border: "1px solid #E7E5E0",
+  borderRadius: 8,
   padding: "10px 12px",
-  fontSize: 16,
-  color: "#1B4332",
+  fontSize: 15,
+  color: "#1C1917",
   outline: "none",
   fontFamily: "inherit",
   background: "#fff",
@@ -149,13 +149,13 @@ const inp: React.CSSProperties = {
 };
 const pri: React.CSSProperties = {
   width: "100%",
-  padding: "14px",
-  borderRadius: 12,
-  background: "#2D6A4F",
+  padding: "13px",
+  borderRadius: 8,
+  background: "#5C8C76",
   color: "#fff",
   border: "none",
-  fontSize: 15,
-  fontWeight: 700,
+  fontSize: 14,
+  fontWeight: 600,
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
@@ -163,13 +163,13 @@ const pri: React.CSSProperties = {
   gap: 8,
 };
 const sec: React.CSSProperties = {
-  padding: "12px 18px",
-  borderRadius: 12,
-  background: "#fff",
-  color: "#2D6A4F",
-  border: "1.5px solid #D8F3DC",
+  padding: "11px 16px",
+  borderRadius: 8,
+  background: "transparent",
+  color: "#5C8C76",
+  border: "1px solid #E7E5E0",
   fontSize: 14,
-  fontWeight: 600,
+  fontWeight: 500,
   cursor: "pointer",
   fontFamily: "inherit",
   display: "flex",
@@ -179,8 +179,8 @@ const sec: React.CSSProperties = {
 };
 const card: React.CSSProperties = {
   background: "#fff",
-  borderRadius: 14,
-  border: "1.5px solid #D8F3DC",
+  borderRadius: 10,
+  border: "1px solid #E7E5E0",
   padding: "14px 16px",
   marginBottom: 10,
 };
@@ -280,7 +280,7 @@ function Onboarding({ onDone }: OnboardingProps) {
     <div
       style={{
         minHeight: "100vh",
-        background: "#F0FFF4",
+        background: "#F7F6F3",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -306,7 +306,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                 width: i === step ? 24 : 8,
                 height: 8,
                 borderRadius: 4,
-                background: i <= step ? "#2D6A4F" : "#D8F3DC",
+                background: i <= step ? "#5C8C76" : "#E7E5E0",
                 transition: "all 0.3s",
               }}
             />
@@ -320,7 +320,7 @@ function Onboarding({ onDone }: OnboardingProps) {
               style={{
                 fontSize: 26,
                 fontWeight: 800,
-                color: "#1B4332",
+                color: "#1C1917",
                 marginBottom: 10,
                 letterSpacing: "-0.5px",
               }}
@@ -332,7 +332,7 @@ function Onboarding({ onDone }: OnboardingProps) {
             <div
               style={{
                 fontSize: 15,
-                color: "#52B788",
+                color: "#5C8C76",
                 lineHeight: 1.6,
                 marginBottom: 32,
               }}
@@ -362,7 +362,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                 marginTop: 12,
                 background: "none",
                 border: "none",
-                color: "#74C69D",
+                color: "#78716C",
                 fontSize: 13,
                 cursor: "pointer",
                 padding: "8px",
@@ -376,11 +376,11 @@ function Onboarding({ onDone }: OnboardingProps) {
         {step === 1 && (
           <div>
             <div
-              style={{ fontSize: 22, fontWeight: 800, color: "#1B4332", marginBottom: 6 }}
+              style={{ fontSize: 22, fontWeight: 800, color: "#1C1917", marginBottom: 6 }}
             >
               Your Classes
             </div>
-            <div style={{ fontSize: 14, color: "#52B788", marginBottom: 24 }}>
+            <div style={{ fontSize: 14, color: "#5C8C76", marginBottom: 24 }}>
               Add the classes you teach.
             </div>
             {classes.map((cls, ci) => (
@@ -436,7 +436,7 @@ function Onboarding({ onDone }: OnboardingProps) {
             </div>
             <button
               onClick={() => onDone(teacherName.trim(), [])}
-              style={{ background: "none", border: "none", color: "#95D5B2", fontSize: 13, cursor: "pointer", width: "100%", marginTop: 12, padding: "4px" }}
+              style={{ background: "none", border: "none", color: "#A8A29E", fontSize: 13, cursor: "pointer", width: "100%", marginTop: 12, padding: "4px" }}
             >
               Skip — I&apos;ll set up classes later
             </button>
@@ -446,11 +446,11 @@ function Onboarding({ onDone }: OnboardingProps) {
         {step === 2 && (
           <div>
             <div
-              style={{ fontSize: 22, fontWeight: 800, color: "#1B4332", marginBottom: 6 }}
+              style={{ fontSize: 22, fontWeight: 800, color: "#1C1917", marginBottom: 6 }}
             >
               Add Students
             </div>
-            <div style={{ fontSize: 14, color: "#52B788", marginBottom: 20 }}>
+            <div style={{ fontSize: 14, color: "#5C8C76", marginBottom: 20 }}>
               Add students to each class. You can always edit these later.
             </div>
             {classes
@@ -461,7 +461,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                     style={{
                       fontSize: 13,
                       fontWeight: 700,
-                      color: "#2D6A4F",
+                      color: "#5C8C76",
                       marginBottom: 10,
                       display: "flex",
                       alignItems: "center",
@@ -473,7 +473,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                         width: 6,
                         height: 6,
                         borderRadius: "50%",
-                        background: "#52B788",
+                        background: "#5C8C76",
                       }}
                     />
                     {cls.name}
@@ -497,7 +497,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                           style={{
                             background: "none",
                             border: "none",
-                            color: "#95D5B2",
+                            color: "#A8A29E",
                             fontSize: 16,
                             cursor: "pointer",
                           }}
@@ -512,7 +512,7 @@ function Onboarding({ onDone }: OnboardingProps) {
                     style={{
                       background: "none",
                       border: "none",
-                      color: "#52B788",
+                      color: "#5C8C76",
                       fontWeight: 700,
                       fontSize: 13,
                       cursor: "pointer",
@@ -573,8 +573,8 @@ function Steps({ current }: { current: number }) {
                   width: 30,
                   height: 30,
                   borderRadius: "50%",
-                  background: done ? "#2D6A4F" : active ? "#52B788" : "#D8F3DC",
-                  color: done || active ? "#fff" : "#74C69D",
+                  background: done ? "#5C8C76" : active ? "#5C8C76" : "#E7E5E0",
+                  color: done || active ? "#fff" : "#78716C",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -589,7 +589,7 @@ function Steps({ current }: { current: number }) {
                 style={{
                   fontSize: 10,
                   fontWeight: active ? 700 : 400,
-                  color: active ? "#2D6A4F" : "#74C69D",
+                  color: active ? "#5C8C76" : "#78716C",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -601,7 +601,7 @@ function Steps({ current }: { current: number }) {
                 style={{
                   flex: 1,
                   height: 2,
-                  background: done ? "#52B788" : "#D8F3DC",
+                  background: done ? "#5C8C76" : "#E7E5E0",
                   margin: "0 6px",
                   marginBottom: 18,
                   transition: "background 0.3s",
@@ -818,14 +818,14 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             style={{
               fontSize: 22,
               fontWeight: 800,
-              color: "#1B4332",
+              color: "#1C1917",
               marginBottom: 4,
               letterSpacing: "-0.3px",
             }}
           >
             Create Your First Class
           </div>
-          <div style={{ fontSize: 14, color: "#74C69D" }}>
+          <div style={{ fontSize: 14, color: "#78716C" }}>
             We detected these students from your sheet. Edit names or add more
             before creating the class.
           </div>
@@ -873,7 +873,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
                 style={{
                   background: "none",
                   border: "none",
-                  color: "#95D5B2",
+                  color: "#A8A29E",
                   fontSize: 16,
                   cursor: "pointer",
                   padding: "0 4px",
@@ -889,7 +889,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             style={{
               background: "none",
               border: "none",
-              color: "#52B788",
+              color: "#5C8C76",
               fontWeight: 700,
               fontSize: 13,
               cursor: "pointer",
@@ -932,14 +932,14 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             style={{
               fontSize: 22,
               fontWeight: 800,
-              color: "#1B4332",
+              color: "#1C1917",
               marginBottom: 4,
               letterSpacing: "-0.3px",
             }}
           >
             Upload Progress Sheet
           </div>
-          <div style={{ fontSize: 14, color: "#74C69D" }}>
+          <div style={{ fontSize: 14, color: "#78716C" }}>
             Take a photo or choose from your library
           </div>
         </div>
@@ -1036,10 +1036,10 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
           onDrop={handleDrop}
           style={{
             border: `2px dashed ${
-              dragging ? "#52B788" : preview ? "#2D6A4F" : "#B7E4C7"
+              dragging ? "#5C8C76" : preview ? "#5C8C76" : "#D6D3D1"
             }`,
             borderRadius: 16,
-            background: dragging ? "#F0FFF4" : preview ? "#F6FBF8" : "#FAFFFE",
+            background: dragging ? "#FAFAF9" : preview ? "#F5F5F4" : "#FAFFFE",
             minHeight: 140,
             display: isMobile && !preview ? "none" : "flex",
             flexDirection: "column",
@@ -1067,7 +1067,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
                 style={{
                   marginTop: 8,
                   fontSize: 12,
-                  color: "#52B788",
+                  color: "#5C8C76",
                   fontWeight: 600,
                 }}
               >
@@ -1076,7 +1076,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             </>
           ) : (
             <div
-              style={{ padding: 20, textAlign: "center", color: "#95D5B2" }}
+              style={{ padding: 20, textAlign: "center", color: "#A8A29E" }}
             >
               <div style={{ fontSize: 28, marginBottom: 6 }}><ImageIcon size={20} /></div>
               <div style={{ fontSize: 13 }}>
@@ -1089,7 +1089,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               style={{
                 position: "absolute",
                 inset: 0,
-                background: "rgba(45,106,79,0.15)",
+                background: "rgba(92,140,118,0.15)",
                 borderRadius: 12,
                 display: "flex",
                 flexDirection: "column",
@@ -1135,12 +1135,12 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               textAlign: "center",
               padding: "12px 16px",
               marginBottom: 12,
-              background: "#F0FFF4",
+              background: "#FAFAF9",
               borderRadius: 10,
-              border: "1.5px solid #D8F3DC",
+              border: "1px solid #E7E5E0",
             }}
           >
-            <div style={{ fontSize: 13, color: "#52B788", lineHeight: 1.6 }}>
+            <div style={{ fontSize: 13, color: "#5C8C76", lineHeight: 1.6 }}>
               No classes yet — upload your first sheet and we&apos;ll create one
               from it.
             </div>
@@ -1210,20 +1210,20 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             style={{
               fontSize: 22,
               fontWeight: 800,
-              color: "#1B4332",
+              color: "#1C1917",
               marginBottom: 4,
               letterSpacing: "-0.3px",
             }}
           >
             Review Entries
           </div>
-          <div style={{ fontSize: 14, color: "#74C69D" }}>
+          <div style={{ fontSize: 14, color: "#78716C" }}>
             Check and edit before sending
           </div>
         </div>
         <div
           style={{
-            background: "#D8F3DC",
+            background: "#E7E5E0",
             borderRadius: 12,
             padding: "12px 16px",
             marginBottom: 16,
@@ -1233,10 +1233,10 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
         >
           <span style={{ fontSize: 18, display: "flex", alignItems: "center" }}><ImageIcon size={20} /></span>
           <div>
-            <div style={{ fontWeight: 700, color: "#2D6A4F", fontSize: 14 }}>
+            <div style={{ fontWeight: 700, color: "#5C8C76", fontSize: 14 }}>
               AI has pre-filled these from your photo
             </div>
-            <div style={{ fontSize: 12, color: "#52B788", marginTop: 2 }}>
+            <div style={{ fontSize: 12, color: "#5C8C76", marginTop: 2 }}>
               {students.filter((s) => s.uncertain).length > 0
                 ? `${
                     students.filter((s) => s.uncertain).length
@@ -1252,10 +1252,10 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             marginBottom: 12,
           }}
         >
-          <span style={{ fontSize: 13, color: "#74C69D" }}>
+          <span style={{ fontSize: 13, color: "#78716C" }}>
             {activeClass?.name} · {formatDate(parsedDate)}
           </span>
-          <span style={{ fontSize: 13, color: "#2D6A4F", fontWeight: 700 }}>
+          <span style={{ fontSize: 13, color: "#5C8C76", fontWeight: 700 }}>
             {students.length} students
           </span>
         </div>
@@ -1312,7 +1312,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
       <Steps current={3} />
       <div
         style={{
-          background: "#D8F3DC",
+          background: "#E7E5E0",
           borderRadius: 12,
           padding: "12px 16px",
           marginBottom: 16,
@@ -1322,10 +1322,10 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
       >
         <span style={{ fontSize: 18, display: "flex", alignItems: "center" }}><Check size={18} /></span>
         <div>
-          <div style={{ fontWeight: 700, color: "#2D6A4F", fontSize: 14 }}>
+          <div style={{ fontWeight: 700, color: "#5C8C76", fontSize: 14 }}>
             {students.length} parent messages ready
           </div>
-          <div style={{ fontSize: 12, color: "#52B788", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#5C8C76", marginTop: 2 }}>
             Copy individually or all at once to paste into WhatsApp.
           </div>
         </div>
@@ -1346,14 +1346,14 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
               marginBottom: 10,
             }}
           >
-            <span style={{ fontWeight: 700, color: "#1B4332", fontSize: 15 }}>
+            <span style={{ fontWeight: 700, color: "#1C1917", fontSize: 15 }}>
               {s.name}
             </span>
             <button
               onClick={() => copyOne(s)}
               style={{
-                background: copied[s.name] ? "#2D6A4F" : "#D8F3DC",
-                color: copied[s.name] ? "#fff" : "#2D6A4F",
+                background: copied[s.name] ? "#5C8C76" : "#E7E5E0",
+                color: copied[s.name] ? "#fff" : "#5C8C76",
                 border: "none",
                 borderRadius: 8,
                 padding: "6px 14px",
@@ -1370,7 +1370,7 @@ function UploadTab({ classes, setClasses, messageTemplate, teacherName, onSaveHi
             style={{
               fontFamily: "inherit",
               fontSize: 12,
-              color: "#52B788",
+              color: "#5C8C76",
               lineHeight: 1.7,
               margin: 0,
               whiteSpace: "pre-wrap",
@@ -1413,7 +1413,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
           style={{
             background: "none",
             border: "none",
-            color: "#52B788",
+            color: "#5C8C76",
             fontWeight: 700,
             fontSize: 14,
             cursor: "pointer",
@@ -1438,24 +1438,24 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
               width: 44,
               height: 44,
               borderRadius: "50%",
-              background: "#D8F3DC",
+              background: "#E7E5E0",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontWeight: 800,
               fontSize: 18,
-              color: "#2D6A4F",
+              color: "#5C8C76",
             }}
           >
             {selStudent[0]}
           </div>
           <div>
             <div
-              style={{ fontWeight: 800, fontSize: 18, color: "#1B4332" }}
+              style={{ fontWeight: 800, fontSize: 18, color: "#1C1917" }}
             >
               {selStudent}
             </div>
-            <div style={{ fontSize: 12, color: "#74C69D" }}>
+            <div style={{ fontSize: 12, color: "#78716C" }}>
               {activeClass?.name} · {studentEntries.length}{" "}
               {studentEntries.length === 1 ? "entry" : "entries"}
             </div>
@@ -1465,7 +1465,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
           <div
             style={{
               textAlign: "center",
-              color: "#95D5B2",
+              color: "#A8A29E",
               marginTop: 40,
               fontSize: 14,
             }}
@@ -1486,7 +1486,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                 <span
                   style={{
                     fontWeight: 700,
-                    color: "#1B4332",
+                    color: "#1C1917",
                     fontSize: 14,
                   }}
                 >
@@ -1495,9 +1495,9 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                 <span
                   style={{
                     fontSize: 11,
-                    color: "#74C69D",
+                    color: "#78716C",
                     fontWeight: 600,
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "3px 8px",
                     borderRadius: 20,
                   }}
@@ -1513,7 +1513,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                     key={f}
                     style={{
                       flex: 1,
-                      background: "#F0FFF4",
+                      background: "#FAFAF9",
                       borderRadius: 8,
                       padding: "8px 12px",
                     }}
@@ -1522,7 +1522,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                       style={{
                         fontSize: 10,
                         fontWeight: 700,
-                        color: "#52B788",
+                        color: "#5C8C76",
                         marginBottom: 3,
                       }}
                     >
@@ -1531,7 +1531,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                     <div
                       style={{
                         fontSize: 13,
-                        color: "#1B4332",
+                        color: "#1C1917",
                         fontWeight: 500,
                       }}
                     >
@@ -1578,7 +1578,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
         <div
           style={{
             textAlign: "center",
-            color: "#95D5B2",
+            color: "#A8A29E",
             marginTop: 60,
             fontSize: 14,
           }}
@@ -1595,7 +1595,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: "#74C69D",
+              color: "#78716C",
               marginBottom: 10,
               letterSpacing: "0.5px",
             }}
@@ -1622,13 +1622,13 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                     width: 38,
                     height: 38,
                     borderRadius: "50%",
-                    background: "#D8F3DC",
+                    background: "#E7E5E0",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: 700,
                     fontSize: 16,
-                    color: "#2D6A4F",
+                    color: "#5C8C76",
                   }}
                 >
                   {name[0]}
@@ -1637,20 +1637,20 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                   <div
                     style={{
                       fontWeight: 700,
-                      color: "#1B4332",
+                      color: "#1C1917",
                       fontSize: 15,
                     }}
                   >
                     {name}
                   </div>
-                  <div style={{ fontSize: 11, color: "#74C69D" }}>
+                  <div style={{ fontSize: 11, color: "#78716C" }}>
                     {classHistory[name].length}{" "}
                     {classHistory[name].length === 1 ? "entry" : "entries"} ·
                     Last: {classHistory[name].slice(-1)[0]?.date}
                   </div>
                 </div>
               </div>
-              <span style={{ color: "#B7E4C7", fontSize: 20 }}>›</span>
+              <span style={{ color: "#D6D3D1", fontSize: 20 }}>›</span>
             </div>
           ))}
         </>
@@ -1662,7 +1662,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: "#B7E4C7",
+              color: "#D6D3D1",
               marginBottom: 10,
               marginTop: studentsWithHistory.length > 0 ? 20 : 0,
               letterSpacing: "0.5px",
@@ -1686,14 +1686,14 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
                   width: 38,
                   height: 38,
                   borderRadius: "50%",
-                  background: "#F0FFF4",
-                  border: "1.5px dashed #D8F3DC",
+                  background: "#FAFAF9",
+                  border: "1.5px dashed #E7E5E0",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontWeight: 700,
                   fontSize: 16,
-                  color: "#B7E4C7",
+                  color: "#D6D3D1",
                 }}
               >
                 {name[0]}
@@ -1701,7 +1701,7 @@ function HistoryTab({ classes, history }: HistoryTabProps) {
               <div
                 style={{
                   fontWeight: 600,
-                  color: "#95D5B2",
+                  color: "#A8A29E",
                   fontSize: 15,
                 }}
               >
@@ -1849,7 +1849,7 @@ function SettingsTab({
       <div
         style={{
           display: "flex",
-          background: "#D8F3DC",
+          background: "#E7E5E0",
           borderRadius: 10,
           padding: 4,
           marginBottom: 24,
@@ -1868,8 +1868,8 @@ function SettingsTab({
               fontWeight: 700,
               fontSize: 13,
               transition: "all 0.2s",
-              background: section === key ? "#2D6A4F" : "transparent",
-              color: section === key ? "#fff" : "#52B788",
+              background: section === key ? "#5C8C76" : "transparent",
+              color: section === key ? "#fff" : "#5C8C76",
             }}
           >
             {label}
@@ -1881,7 +1881,7 @@ function SettingsTab({
         <div>
           <div
             style={{
-              background: "#D8F3DC",
+              background: "#E7E5E0",
               borderRadius: 12,
               padding: "12px 16px",
               marginBottom: 20,
@@ -1892,14 +1892,14 @@ function SettingsTab({
             <span style={{ fontSize: 18, display: "flex", alignItems: "center" }}><Pencil size={18} /></span>
             <div>
               <div
-                style={{ fontWeight: 700, color: "#2D6A4F", fontSize: 14 }}
+                style={{ fontWeight: 700, color: "#5C8C76", fontSize: 14 }}
               >
                 Customise your message
               </div>
               <div
                 style={{
                   fontSize: 12,
-                  color: "#52B788",
+                  color: "#5C8C76",
                   marginTop: 2,
                   lineHeight: 1.5,
                 }}
@@ -1907,7 +1907,7 @@ function SettingsTab({
                 Use{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1918,7 +1918,7 @@ function SettingsTab({
                 ,{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1929,7 +1929,7 @@ function SettingsTab({
                 ,{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1940,7 +1940,7 @@ function SettingsTab({
                 ,{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1951,7 +1951,7 @@ function SettingsTab({
                 ,{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1962,7 +1962,7 @@ function SettingsTab({
                 ,{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1973,7 +1973,7 @@ function SettingsTab({
                 ,{" "}
                 <code
                   style={{
-                    background: "#F0FFF4",
+                    background: "#FAFAF9",
                     padding: "1px 4px",
                     borderRadius: 4,
                     fontSize: 11,
@@ -1990,7 +1990,7 @@ function SettingsTab({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "#74C69D",
+                  color: "#78716C",
                   marginBottom: 10,
                   letterSpacing: "0.5px",
                 }}
@@ -2008,7 +2008,7 @@ function SettingsTab({
                   style={{
                     fontFamily: "inherit",
                     fontSize: 13,
-                    color: "#1B4332",
+                    color: "#1C1917",
                     lineHeight: 1.8,
                     margin: 0,
                     whiteSpace: "pre-wrap",
@@ -2022,12 +2022,12 @@ function SettingsTab({
                     position: "absolute",
                     top: 12,
                     right: 12,
-                    background: "#D8F3DC",
+                    background: "#E7E5E0",
                     borderRadius: 8,
                     padding: "4px 10px",
                     fontSize: 11,
                     fontWeight: 700,
-                    color: "#2D6A4F",
+                    color: "#5C8C76",
                   }}
                 >
                   Tap to edit
@@ -2037,7 +2037,7 @@ function SettingsTab({
                 <div
                   style={{
                     textAlign: "center",
-                    color: "#52B788",
+                    color: "#5C8C76",
                     fontWeight: 700,
                     fontSize: 14,
                     marginTop: 14,
@@ -2053,7 +2053,7 @@ function SettingsTab({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "#74C69D",
+                  color: "#78716C",
                   marginBottom: 10,
                   letterSpacing: "0.5px",
                 }}
@@ -2067,17 +2067,17 @@ function SettingsTab({
                 autoFocus
                 style={{
                   width: "100%",
-                  border: "1.5px solid #52B788",
+                  border: "1px solid #5C8C76",
                   borderRadius: 12,
                   padding: "14px",
                   fontSize: 16,
-                  color: "#1B4332",
+                  color: "#1C1917",
                   lineHeight: 1.8,
                   outline: "none",
                   fontFamily: "inherit",
                   background: "#fff",
                   resize: "vertical",
-                  boxShadow: "0 0 0 3px rgba(82,183,136,0.15)",
+                  boxShadow: "0 0 0 3px rgba(92,140,118,0.15)",
                 }}
               />
               {/* Live preview */}
@@ -2086,7 +2086,7 @@ function SettingsTab({
                   marginTop: 16,
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "#74C69D",
+                  color: "#78716C",
                   marginBottom: 8,
                   letterSpacing: "0.5px",
                 }}
@@ -2096,15 +2096,15 @@ function SettingsTab({
               <div
                 style={{
                   ...card,
-                  background: "#F6FBF8",
-                  border: "1.5px dashed #B7E4C7",
+                  background: "#F5F5F4",
+                  border: "1.5px dashed #D6D3D1",
                 }}
               >
                 <pre
                   style={{
                     fontFamily: "inherit",
                     fontSize: 12,
-                    color: "#52B788",
+                    color: "#5C8C76",
                     lineHeight: 1.8,
                     margin: 0,
                     whiteSpace: "pre-wrap",
@@ -2160,20 +2160,20 @@ function SettingsTab({
                     <div
                       style={{
                         fontWeight: 700,
-                        color: "#1B4332",
+                        color: "#1C1917",
                         fontSize: 15,
                       }}
                     >
                       {cls.name}
                     </div>
-                    <div style={{ fontSize: 12, color: "#74C69D", marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: "#78716C", marginTop: 2 }}>
                       {cls.students.length} student
                       {cls.students.length !== 1 ? "s" : ""}
                     </div>
                   </div>
                   <span
                     style={{
-                      color: "#95D5B2",
+                      color: "#A8A29E",
                       fontSize: 18,
                       display: "inline-block",
                       transform:
@@ -2188,7 +2188,7 @@ function SettingsTab({
                 {editingClass === cls.id && (
                   <div
                     style={{
-                      borderTop: "1.5px solid #D8F3DC",
+                      borderTop: "1px solid #E7E5E0",
                       padding: "14px 16px",
                     }}
                   >
@@ -2218,13 +2218,13 @@ function SettingsTab({
                             width: 28,
                             height: 28,
                             borderRadius: "50%",
-                            background: "#D8F3DC",
+                            background: "#E7E5E0",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontSize: 12,
                             fontWeight: 700,
-                            color: "#2D6A4F",
+                            color: "#5C8C76",
                             flexShrink: 0,
                           }}
                         >
@@ -2234,7 +2234,7 @@ function SettingsTab({
                           style={{
                             flex: 1,
                             fontSize: 14,
-                            color: "#1B4332",
+                            color: "#1C1917",
                             fontWeight: 500,
                           }}
                         >
@@ -2261,7 +2261,7 @@ function SettingsTab({
                       style={{
                         marginTop: 16,
                         background: "none",
-                        border: "1.5px solid #FFB703",
+                        border: "1px solid #FFB703",
                         color: "#FFB703",
                         borderRadius: 10,
                         padding: "10px",
@@ -2297,7 +2297,7 @@ function SettingsTab({
               placeholder="e.g. Teacher Yie Teng"
               style={{ ...inp }}
             />
-            <div style={{ fontSize: 12, color: "#95D5B2", marginTop: 6 }}>
+            <div style={{ fontSize: 12, color: "#A8A29E", marginTop: 6 }}>
               This appears in your message sign-off.
             </div>
           </div>
@@ -2306,7 +2306,7 @@ function SettingsTab({
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: "#74C69D",
+                color: "#78716C",
                 marginBottom: 10,
                 letterSpacing: "0.5px",
               }}
@@ -2331,7 +2331,7 @@ function SettingsTab({
                 onChange={handleImport}
               />
             </div>
-            <div style={{ fontSize: 12, color: "#95D5B2", marginTop: 6 }}>
+            <div style={{ fontSize: 12, color: "#A8A29E", marginTop: 6 }}>
               Export saves classes, history, template, and your name. Import replaces all data.
             </div>
           </div>
@@ -2402,7 +2402,7 @@ function AddStudentInline({ onAdd }: { onAdd: (name: string) => void }) {
           }
         }}
         style={{
-          background: "#2D6A4F",
+          background: "#5C8C76",
           color: "#fff",
           border: "none",
           borderRadius: 10,
@@ -2425,7 +2425,7 @@ function Splash() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#1B4332",
+        background: "#1C1917",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -2460,7 +2460,7 @@ function Splash() {
       </div>
       <div
         className="line2"
-        style={{ fontSize: 14, color: "#52B788", marginBottom: 40 }}
+        style={{ fontSize: 14, color: "#5C8C76", marginBottom: 40 }}
       >
         Daily progress · Parent updates
       </div>
@@ -2472,14 +2472,14 @@ function Splash() {
           style={{
             width: 18,
             height: 18,
-            border: "2px solid #52B788",
+            border: "2px solid #5C8C76",
             borderTop: "2px solid transparent",
             borderRadius: "50%",
             animation: "spin 0.9s linear infinite",
           }}
         />
         <span
-          style={{ fontSize: 13, color: "#52B788", fontWeight: 500 }}
+          style={{ fontSize: 13, color: "#5C8C76", fontWeight: 500 }}
         >
           Loading<span className="dot" />
         </span>
@@ -2549,7 +2549,7 @@ export default function App() {
   if (!onboarded)
     return (
       <>
-        <style>{`* { box-sizing:border-box; } @keyframes spin { to { transform:rotate(360deg); } } input:focus,select:focus,textarea:focus { border-color:#52B788!important; box-shadow:0 0 0 3px rgba(82,183,136,0.15); }`}</style>
+        <style>{`* { box-sizing:border-box; } @keyframes spin { to { transform:rotate(360deg); } } input:focus,select:focus,textarea:focus { border-color:#5C8C76!important; box-shadow:0 0 0 3px rgba(92,140,118,0.15); }`}</style>
         <Onboarding onDone={handleOnboardDone} />
       </>
     );
@@ -2558,16 +2558,16 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#F0FFF4",
+        background: "#F7F6F3",
         fontFamily: "'Inter',system-ui,sans-serif",
       }}
     >
-      <style>{`* { box-sizing:border-box; } @keyframes spin { to { transform:rotate(360deg); } } input:focus,select:focus,textarea:focus { border-color:#52B788!important; box-shadow:0 0 0 3px rgba(82,183,136,0.15); } button:active { opacity:0.85; }`}</style>
+      <style>{`* { box-sizing:border-box; } @keyframes spin { to { transform:rotate(360deg); } } input:focus,select:focus,textarea:focus { border-color:#5C8C76!important; box-shadow:0 0 0 3px rgba(92,140,118,0.15); } button:active { opacity:0.85; }`}</style>
       <div
         style={{
           background: "#fff",
-          borderBottom: "1.5px solid #D8F3DC",
-          padding: "16px 20px 12px",
+          borderBottom: "1px solid #E7E5E0",
+          padding: "14px 20px 10px",
           position: "sticky",
           top: 0,
           zIndex: 50,
@@ -2588,13 +2588,13 @@ export default function App() {
               style={{
                 fontWeight: 800,
                 fontSize: 17,
-                color: "#1B4332",
+                color: "#1C1917",
                 letterSpacing: "-0.3px",
               }}
             >
               Homework Success
             </div>
-            <div style={{ fontSize: 11, color: "#74C69D" }}>{titles[tab]}</div>
+            <div style={{ fontSize: 11, color: "#78716C" }}>{titles[tab]}</div>
           </div>
         </div>
       </div>

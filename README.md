@@ -36,7 +36,7 @@ npm run start   # then press i / a / w, or scan the QR code with Expo Go
 ```
 src/
   app/                    # expo-router screens
-    (tabs)/               # Home, Today, Voice, Growth, Reminders
+    (tabs)/               # Home, Today, Voice, Fitness, Growth, Reminders
   design-system/          # Command Deck tokens + shared components
   domains/
     growth/                # journaling + habit tracking (first domain built)
@@ -47,6 +47,9 @@ src/
     reminders/              # local notifications, one-off or recurring
       types.ts, storage.ts, actions.ts, tools.ts   # same shape as growth/
       notifications.ts       # expo-notifications wrapper (schedule/cancel)
+    fitness/                # split/exercise/set logging + streaks
+      types.ts, storage.ts, actions.ts, tools.ts   # same shape as growth/
+      streak.ts              # grace-day streak math, ported from Gymm
   voice/
     claudeClient.ts        # calls Claude with the combined tool registry
     pipeline.ts             # transcript -> tool_use -> confirm -> execute -> speak
@@ -60,10 +63,8 @@ see `AGENTS.md` for the rules this project is built around.
 
 ## Status
 
-Foundation + Personal Growth + Reminders/Scheduling domains (per the
-handover's suggested build order). Reminders fire via `expo-notifications`
-local notifications, independent of a live app/voice session. Next up:
-Fitness (wrapping the existing gym app), Skincare, then
+Foundation + Personal Growth + Reminders/Scheduling + Fitness domains (per
+the handover's suggested build order). Next up: Skincare, then
 Medication/Supplements.
 
 Reminders' manual "add" form uses quick date/time presets (In 1 hour, Today
@@ -71,6 +72,34 @@ Reminders' manual "add" form uses quick date/time presets (In 1 hour, Today
 scope cut to avoid pulling in another native module before the app has been
 run on a device; swap in `@react-native-community/datetimepicker` when a
 real picker is needed.
+
+### Fitness domain: what got reused from Gymm, what didn't
+
+Per the handover's instruction to "reuse/wrap existing gym app logic as
+tools rather than rebuilding," this domain is ported from
+[`SeanYeoTE/Gymm`](https://github.com/SeanYeoTE/Gymm) (`app/lib/data/`):
+
+- **Reused as-is:** the `Split`/`LiftSet`/`LoggedExercise` data shapes, the
+  set-split/add-exercise/save-lift write semantics (switching splits clears
+  that day's exercises, `addExercise` dedupes by name, `saveLift` replaces
+  a set list wholesale), the exercise suggestion list per split, and —
+  faithfully ported — Gymm's grace-day streak algorithm (`compute_streak()`
+  in its Postgres migrations), including the "protected rest day" rule.
+  `src/domains/fitness/streak.ts` documents the port and was sanity-checked
+  against a handful of hand-computed cases (consecutive days, protected
+  rest, grace-bank consumption, streak-breaking gaps).
+- **Not reused:** Gymm's Supabase backend and auth. It requires a signed-in
+  user (`supabaseProvider.ts`'s `requireUserId()`), and A.M.P has no auth
+  or backend set up — every other domain here is local-only
+  (`AsyncStorage`), so Fitness follows the same pattern for now rather than
+  introducing the only authenticated domain in the app. This also means
+  Gymm's social features (friends, presence, outlets, high-fives) are
+  out of scope — they're not in the handover's Fitness domain description
+  either.
+- If/when A.M.P grows real accounts, swapping Fitness's `actions.ts` to call
+  Gymm's actual `supabaseProvider` (or a shared backend) instead of
+  AsyncStorage is a contained change — `types.ts` already matches its
+  shape closely.
 
 ## CI/CD and approvals
 

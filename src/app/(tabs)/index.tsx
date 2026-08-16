@@ -4,6 +4,7 @@ import { router, useFocusEffect } from 'expo-router';
 
 import { Screen, Text, VoiceFAB, DomainChip, Color, Spacing, Radius, Elevation } from '@/design-system';
 import { getHabitStreak, listHabits, listJournalEntries } from '@/domains/growth/actions';
+import { getStreak as getFitnessStreak, getTodaysLog } from '@/domains/fitness/actions';
 import { listReminders } from '@/domains/reminders/actions';
 
 export default function HomeScreen() {
@@ -12,6 +13,8 @@ export default function HomeScreen() {
   const [bestStreak, setBestStreak] = useState(0);
   const [journalCount, setJournalCount] = useState(0);
   const [upcomingReminders, setUpcomingReminders] = useState(0);
+  const [fitnessStreak, setFitnessStreak] = useState(0);
+  const [fitnessSplit, setFitnessSplit] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const habits = await listHabits();
@@ -21,6 +24,8 @@ export default function HomeScreen() {
     setBestStreak(habits.reduce((max, h) => Math.max(max, getHabitStreak(h)), 0));
     setJournalCount((await listJournalEntries()).length);
     setUpcomingReminders((await listReminders()).filter((r) => !r.completed).length);
+    setFitnessStreak((await getFitnessStreak()).currentStreak);
+    setFitnessSplit((await getTodaysLog()).split);
   }, []);
 
   useFocusEffect(
@@ -51,6 +56,14 @@ export default function HomeScreen() {
       <View style={styles.card}>
         <DomainChip domain="reminders" />
         <Text variant="h2">{upcomingReminders} upcoming reminders</Text>
+      </View>
+
+      <View style={styles.card}>
+        <DomainChip domain="fitness" />
+        <Text variant="h2">{fitnessStreak} day fitness streak</Text>
+        <Text variant="caption" color={Color.textSecondary}>
+          {fitnessSplit ? `Today: ${fitnessSplit.replace('_', ' ')}` : 'No split set today'}
+        </Text>
       </View>
 
       <View style={styles.fabRow}>

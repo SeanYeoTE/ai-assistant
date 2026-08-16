@@ -36,7 +36,7 @@ npm run start   # then press i / a / w, or scan the QR code with Expo Go
 ```
 src/
   app/                    # expo-router screens
-    (tabs)/               # Home, Today, Voice, Fitness, Growth, Reminders
+    (tabs)/               # Home, Today, Voice, Fitness, Growth, Reminders, Skincare
   design-system/          # Command Deck tokens + shared components
   domains/
     growth/                # journaling + habit tracking (first domain built)
@@ -50,6 +50,9 @@ src/
     fitness/                # split/exercise/set logging + streaks
       types.ts, storage.ts, actions.ts, tools.ts   # same shape as growth/
       streak.ts              # grace-day streak math, ported from Gymm
+    skincare/                # routine steps, products, time-of-day reminders
+      types.ts, storage.ts, actions.ts, tools.ts   # same shape as growth/
+      notifications.ts       # expo-notifications wrapper for the morning/evening reminders
   voice/
     claudeClient.ts        # calls Claude with the combined tool registry
     pipeline.ts             # transcript -> tool_use -> confirm -> execute -> speak
@@ -63,9 +66,9 @@ see `AGENTS.md` for the rules this project is built around.
 
 ## Status
 
-Foundation + Personal Growth + Reminders/Scheduling + Fitness domains (per
-the handover's suggested build order). Next up: Skincare, then
-Medication/Supplements.
+Foundation + Personal Growth + Reminders/Scheduling + Fitness + Skincare
+domains (per the handover's suggested build order). Next up:
+Medication/Supplements — the last one.
 
 Reminders' manual "add" form uses quick date/time presets (In 1 hour, Today
 6pm, Tomorrow 9am) rather than a native date picker — that's a deliberate
@@ -100,6 +103,18 @@ tools rather than rebuilding," this domain is ported from
   Gymm's actual `supabaseProvider` (or a shared backend) instead of
   AsyncStorage is a contained change — `types.ts` already matches its
   shape closely.
+
+### Skincare's reminders are separate from the Reminders domain
+
+Skincare schedules its own morning/evening `expo-notifications` (one daily
+trigger per time-of-day, in `src/domains/skincare/notifications.ts`) rather
+than calling into `src/domains/reminders/`. The handover's domain table
+describes Skincare as "similar shape to reminders but with its own
+history/schema" — these are routine-level reminders tied 1:1 to a
+morning/evening bucket, not user-created one-off/recurring items, so they
+don't fit the general Reminders domain's data model. Both wrappers are thin
+enough (permission check + schedule/cancel) that duplicating the ~10 lines
+was simpler than introducing a cross-domain dependency.
 
 ## CI/CD and approvals
 

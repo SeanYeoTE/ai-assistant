@@ -55,6 +55,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="alarm-outline" size={size} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="skincare"
+        options={{
+          title: 'Skincare',
+          tabBarIcon: ({ color, size }) => <Ionicons name="water-outline" size={size} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

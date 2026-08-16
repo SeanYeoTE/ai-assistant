@@ -6,6 +6,7 @@ import { Screen, Text, VoiceFAB, DomainChip, Color, Spacing, Radius, Elevation }
 import { getHabitStreak, listHabits, listJournalEntries } from '@/domains/growth/actions';
 import { getStreak as getFitnessStreak, getTodaysLog } from '@/domains/fitness/actions';
 import { listReminders } from '@/domains/reminders/actions';
+import { listRoutineSteps, todaysLoggedStepNames } from '@/domains/skincare/actions';
 
 export default function HomeScreen() {
   const [habitsDoneToday, setHabitsDoneToday] = useState(0);
@@ -15,6 +16,8 @@ export default function HomeScreen() {
   const [upcomingReminders, setUpcomingReminders] = useState(0);
   const [fitnessStreak, setFitnessStreak] = useState(0);
   const [fitnessSplit, setFitnessSplit] = useState<string | null>(null);
+  const [skincareDoneToday, setSkincareDoneToday] = useState(0);
+  const [skincareTotal, setSkincareTotal] = useState(0);
 
   const refresh = useCallback(async () => {
     const habits = await listHabits();
@@ -26,6 +29,14 @@ export default function HomeScreen() {
     setUpcomingReminders((await listReminders()).filter((r) => !r.completed).length);
     setFitnessStreak((await getFitnessStreak()).currentStreak);
     setFitnessSplit((await getTodaysLog()).split);
+
+    const steps = await listRoutineSteps();
+    const doneMorning = await todaysLoggedStepNames('morning');
+    const doneEvening = await todaysLoggedStepNames('evening');
+    setSkincareTotal(steps.length);
+    setSkincareDoneToday(
+      steps.filter((s) => (s.timeOfDay === 'morning' ? doneMorning : doneEvening).has(s.name)).length
+    );
   }, []);
 
   useFocusEffect(
@@ -63,6 +74,13 @@ export default function HomeScreen() {
         <Text variant="h2">{fitnessStreak} day fitness streak</Text>
         <Text variant="caption" color={Color.textSecondary}>
           {fitnessSplit ? `Today: ${fitnessSplit.replace('_', ' ')}` : 'No split set today'}
+        </Text>
+      </View>
+
+      <View style={styles.card}>
+        <DomainChip domain="skincare" />
+        <Text variant="h2">
+          {skincareDoneToday}/{skincareTotal} skincare steps done today
         </Text>
       </View>
 

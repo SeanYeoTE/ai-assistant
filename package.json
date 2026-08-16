@@ -9,7 +9,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:preview": "eas build --profile preview",
+    "build:production": "eas build --profile production",
+    "submit:production": "eas submit --profile production --latest"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.101.0",

@@ -61,7 +61,40 @@ Foundation + Personal Growth domain (per the handover's suggested build
 order). Next up: Reminders/Scheduling, Fitness (wrapping the existing gym
 app), Skincare, then Medication/Supplements.
 
-## CI
+## CI/CD and approvals
 
-GitHub Actions runs `npm run lint && npm run typecheck` on every push. See
-`.github/workflows/ci.yml`.
+**CI** (`.github/workflows/ci.yml`) — runs `npm run lint && npm run typecheck`
+on every push and PR. This is meant to be a required status check (see repo
+settings below) so nothing merges to `main` without passing.
+
+**CD** (`.github/workflows/eas-build.yml`, `eas-submit.yml`) — manual only
+(`workflow_dispatch`), never triggered by a push:
+- `development` / `preview` builds run immediately when dispatched.
+- `production` builds and **all** submits run under the `production` GitHub
+  Environment, which blocks the job until a required reviewer approves it in
+  the Actions tab — see setup below. Submitting ships a build to the App
+  Store/Play Store review queue, which is hard to reverse, so that step is
+  never automatic.
+
+Both workflows need an `EXPO_TOKEN` repo secret (an Expo access token with
+build/submit permission — generate one at expo.dev/settings/access-tokens).
+
+### Manual repo settings (do these once, in GitHub's web UI)
+
+This session's GitHub tooling can't change repo/branch protection settings,
+so these need to be set up by hand:
+
+1. **Settings → Environments → New environment → `production`** → under
+   "Deployment protection rules", add yourself as a required reviewer. This
+   is what actually gates `eas build --profile production` and `eas submit`.
+2. **Settings → Secrets and variables → Actions** → add `EXPO_TOKEN`, and
+   `ANTHROPIC_API_KEY` if you want CI to exercise anything that calls Claude.
+3. **Settings → Branches → Add branch protection rule** for `main`:
+   - Require a pull request before merging
+   - Require status checks to pass (select the `Lint & Typecheck` check
+     from `ci.yml`) before merging
+   - Optionally "Require review from Code Owners" to make `.github/CODEOWNERS`
+     enforce your review on every PR
+
+`.github/CODEOWNERS` and `.github/pull_request_template.md` are already in
+place to support #3.

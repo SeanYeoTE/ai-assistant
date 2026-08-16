@@ -41,6 +41,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="leaf-outline" size={size} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="reminders"
+        options={{
+          title: 'Reminders',
+          tabBarIcon: ({ color, size }) => <Ionicons name="alarm-outline" size={size} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

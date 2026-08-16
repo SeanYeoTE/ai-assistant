@@ -36,7 +36,7 @@ npm run start   # then press i / a / w, or scan the QR code with Expo Go
 ```
 src/
   app/                    # expo-router screens
-    (tabs)/               # Home, Today, Voice, Growth
+    (tabs)/               # Home, Today, Voice, Growth, Reminders
   design-system/          # Command Deck tokens + shared components
   domains/
     growth/                # journaling + habit tracking (first domain built)
@@ -44,6 +44,9 @@ src/
       storage.ts            # AsyncStorage read/write
       actions.ts             # the ONLY functions that touch this domain's data
       tools.ts                # Anthropic tool defs + executors wrapping actions.ts
+    reminders/              # local notifications, one-off or recurring
+      types.ts, storage.ts, actions.ts, tools.ts   # same shape as growth/
+      notifications.ts       # expo-notifications wrapper (schedule/cancel)
   voice/
     claudeClient.ts        # calls Claude with the combined tool registry
     pipeline.ts             # transcript -> tool_use -> confirm -> execute -> speak
@@ -57,9 +60,17 @@ see `AGENTS.md` for the rules this project is built around.
 
 ## Status
 
-Foundation + Personal Growth domain (per the handover's suggested build
-order). Next up: Reminders/Scheduling, Fitness (wrapping the existing gym
-app), Skincare, then Medication/Supplements.
+Foundation + Personal Growth + Reminders/Scheduling domains (per the
+handover's suggested build order). Reminders fire via `expo-notifications`
+local notifications, independent of a live app/voice session. Next up:
+Fitness (wrapping the existing gym app), Skincare, then
+Medication/Supplements.
+
+Reminders' manual "add" form uses quick date/time presets (In 1 hour, Today
+6pm, Tomorrow 9am) rather than a native date picker — that's a deliberate
+scope cut to avoid pulling in another native module before the app has been
+run on a device; swap in `@react-native-community/datetimepicker` when a
+real picker is needed.
 
 ## CI/CD and approvals
 

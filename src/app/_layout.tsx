@@ -5,8 +5,10 @@ import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 
 import { GoogleFontsToLoad } from '@/design-system/tokens';
+import { configureNotificationHandler } from '@/domains/reminders/notifications';
 
 SplashScreen.preventAutoHideAsync();
+configureNotificationHandler();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts(GoogleFontsToLoad);

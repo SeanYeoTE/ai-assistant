@@ -5,15 +5,23 @@ import { router, useFocusEffect } from 'expo-router';
 import { Screen, Text, ListRow, DomainChip, Button, Color, Spacing } from '@/design-system';
 import { getHabitStreak, listHabits, toggleHabitToday } from '@/domains/growth/actions';
 import type { Habit } from '@/domains/growth/types';
+import { listReminders, toggleReminderComplete } from '@/domains/reminders/actions';
+import type { Reminder } from '@/domains/reminders/types';
 
-// Cross-domain "today" list. Currently only the Growth domain exists;
-// Reminders/Fitness/Skincare/Meds items will merge into this same list once
-// built (AMP_HANDOVER.md §2/§7), each still reachable without voice.
+type TodayItem =
+  | { kind: 'habit'; id: string; habit: Habit }
+  | { kind: 'reminder'; id: string; reminder: Reminder };
+
+// Cross-domain "today" list, per AMP_HANDOVER.md §2/§7: Growth (habits) and
+// Reminders items merge into one list here; Fitness/Skincare/Meds join once
+// built. Every item is still reachable without voice.
 export default function TodayScreen() {
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
 
   const refresh = useCallback(async () => {
     setHabits(await listHabits());
+    setReminders(await listReminders());
   }, []);
 
   useFocusEffect(
@@ -22,12 +30,28 @@ export default function TodayScreen() {
     }, [refresh])
   );
 
-  async function handleToggle(habitId: string) {
+  async function handleToggleHabit(habitId: string) {
     await toggleHabitToday(habitId);
     refresh();
   }
 
+  async function handleToggleReminder(reminderId: string) {
+    await toggleReminderComplete(reminderId);
+    refresh();
+  }
+
   const today = new Date().toISOString().slice(0, 10);
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
+  // Due today or overdue and not yet completed — that's what belongs on a
+  // "today" list, as opposed to Reminders' full upcoming list.
+  const dueReminders = reminders.filter((r) => !r.completed && new Date(r.dueAt) <= endOfToday);
+
+  const items: TodayItem[] = [
+    ...habits.map((habit): TodayItem => ({ kind: 'habit', id: habit.id, habit })),
+    ...dueReminders.map((reminder): TodayItem => ({ kind: 'reminder', id: reminder.id, reminder })),
+  ];
 
   return (
     <Screen>
@@ -37,28 +61,40 @@ export default function TodayScreen() {
       </View>
 
       <FlatList
-        data={habits}
-        keyExtractor={(h) => h.id}
+        data={items}
+        keyExtractor={(item) => `${item.kind}-${item.id}`}
         ListEmptyComponent={
           <Text variant="body" color={Color.textSecondary}>
-            Nothing to do yet. Add a habit from the Growth tab.
+            Nothing to do yet. Add a habit or reminder from their tabs.
           </Text>
         }
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <DomainChip domain="growth" />
-            <ListRow
-              title={item.name}
-              subtitle={`${getHabitStreak(item)} day streak`}
-              onPress={() => handleToggle(item.id)}
-              trailing={
-                <View
-                  style={[styles.checkbox, item.completedDates.includes(today) && styles.checkboxDone]}
-                />
-              }
-            />
-          </View>
-        )}
+        renderItem={({ item }) =>
+          item.kind === 'habit' ? (
+            <View style={styles.row}>
+              <DomainChip domain="growth" />
+              <ListRow
+                title={item.habit.name}
+                subtitle={`${getHabitStreak(item.habit)} day streak`}
+                onPress={() => handleToggleHabit(item.habit.id)}
+                trailing={
+                  <View
+                    style={[styles.checkbox, item.habit.completedDates.includes(today) && styles.checkboxDone]}
+                  />
+                }
+              />
+            </View>
+          ) : (
+            <View style={styles.row}>
+              <DomainChip domain="reminders" />
+              <ListRow
+                title={item.reminder.title}
+                subtitle={new Date(item.reminder.dueAt).toLocaleString()}
+                onPress={() => handleToggleReminder(item.reminder.id)}
+                trailing={<View style={[styles.checkbox, item.reminder.completed && styles.checkboxDone]} />}
+              />
+            </View>
+          )
+        }
         ItemSeparatorComponent={() => <View style={{ height: Spacing.sm }} />}
       />
     </Screen>

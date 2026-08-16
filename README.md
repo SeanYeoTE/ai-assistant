@@ -64,37 +64,26 @@ app), Skincare, then Medication/Supplements.
 ## CI/CD and approvals
 
 **CI** (`.github/workflows/ci.yml`) — runs `npm run lint && npm run typecheck`
-on every push and PR. This is meant to be a required status check (see repo
-settings below) so nothing merges to `main` without passing.
+on every push and PR.
 
-**CD** (`.github/workflows/eas-build.yml`, `eas-submit.yml`) — manual only
-(`workflow_dispatch`), never triggered by a push:
-- `development` / `preview` builds run immediately when dispatched.
-- `production` builds and **all** submits run under the `production` GitHub
-  Environment, which blocks the job until a required reviewer approves it in
-  the Actions tab — see setup below. Submitting ships a build to the App
-  Store/Play Store review queue, which is hard to reverse, so that step is
-  never automatic.
+**CD** (`.github/workflows/eas-build.yml`) — manual only
+(`workflow_dispatch`), never triggered by a push. Currently **dev-only**:
+`development` and `preview` build profiles, dispatched by hand, no approval
+gate. Needs an `EXPO_TOKEN` repo secret (Settings → Secrets and variables →
+Actions → generate one at expo.dev/settings/access-tokens).
 
-Both workflows need an `EXPO_TOKEN` repo secret (an Expo access token with
-build/submit permission — generate one at expo.dev/settings/access-tokens).
+**Production build/submit and the human-approval gate are intentionally not
+set up yet.** The plan (deferred until GitHub web UI access is available):
+- Create a `production` GitHub Environment (Settings → Environments) with
+  yourself as a required reviewer — that's what would block an
+  `eas build --profile production` or `eas submit` job until approved in the
+  Actions tab, since submitting ships to the App Store/Play Store review
+  queue and is hard to reverse.
+- Branch protection on `main` (Settings → Branches): require a PR, require
+  the `ci.yml` status check to pass, optionally require CODEOWNERS review.
+  `.github/CODEOWNERS` and `.github/pull_request_template.md` are already in
+  place to support this once enabled.
 
-### Manual repo settings (do these once, in GitHub's web UI)
-
-This session's GitHub tooling can't change repo/branch protection settings,
-so these need to be set up by hand:
-
-1. **Settings → Environments → New environment → `production`** → under
-   "Deployment protection rules", add yourself as a required reviewer. This
-   is what actually gates `eas build --profile production` and `eas submit`.
-2. **Settings → Secrets and variables → Actions** → add `EXPO_TOKEN`, and
-   `ANTHROPIC_API_KEY` if you want CI to exercise anything that calls Claude.
-3. **Settings → Branches → Add branch protection rule** for `main`:
-   - Require a pull request before merging
-   - Require status checks to pass (select the `Lint & Typecheck` check
-     from `ci.yml`) before merging
-   - Optionally "Require review from Code Owners" to make `.github/CODEOWNERS`
-     enforce your review on every PR
-
-`.github/CODEOWNERS` and `.github/pull_request_template.md` are already in
-place to support #3.
+Ping me when you have GitHub UI access again and I'll add the `production`
+build profile back to `eas.json` and re-add the gated build/submit
+workflows.

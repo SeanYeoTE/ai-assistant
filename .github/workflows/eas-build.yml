@@ -1,9 +1,11 @@
 name: EAS Build
 
 # Manual only — building via EAS consumes build credits/minutes, so it should
-# never fire on a routine push. Production builds additionally require a
-# human approval via the `production` GitHub Environment (Settings ->
-# Environments -> production -> Required reviewers) before the job starts.
+# never fire on a routine push. Dev-only for now: production builds and
+# `eas submit` are deliberately not wired up here yet — that needs a
+# GitHub Environment with required reviewers (Settings -> Environments),
+# which requires web UI access to configure. Revisit before shipping a
+# production build. See README's "CI/CD and approvals" section.
 on:
   workflow_dispatch:
     inputs:
@@ -15,13 +17,12 @@ on:
       profile:
         description: EAS build profile (see eas.json)
         type: choice
-        options: [development, preview, production]
+        options: [development, preview]
         default: preview
 
 jobs:
   build:
     name: Build (${{ inputs.profile }} / ${{ inputs.platform }})
-    if: inputs.profile != 'production'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,31 +44,3 @@ jobs:
 
       - name: Run EAS build
         run: eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }} --non-interactive --no-wait
-
-  build-production:
-    name: Build (production / ${{ inputs.platform }})
-    if: inputs.profile == 'production'
-    runs-on: ubuntu-latest
-    # Blocks here until a required reviewer on the `production` environment
-    # approves the run in the Actions tab.
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Set up EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Run EAS build
-        run: eas build --platform ${{ inputs.platform }} --profile production --non-interactive --no-wait
